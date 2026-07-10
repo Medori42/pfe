@@ -18,6 +18,7 @@ export class App implements OnInit {
 
   // DEV Switcher ('employee' or 'admin')
   readonly systemRole = signal<'employee' | 'admin'>('employee');
+  quizPdfName = '';
 
   getModuleItems(moduleId: number) {
     const mod = this.onboardingService.modules().find(m => m.id === moduleId);
@@ -260,6 +261,14 @@ export class App implements OnInit {
         });
       });
       this.showToast(`Leçon "${lessonLabelKey}" supprimée !`);
+    }
+  }
+
+  onQuizPdfUploaded(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.quizPdfName = input.files[0].name;
+      this.showToast(`Document "${this.quizPdfName}" ajouté avec succès pour la génération de quiz !`);
     }
   }
 
