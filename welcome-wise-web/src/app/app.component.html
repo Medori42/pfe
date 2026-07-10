@@ -1668,16 +1668,30 @@
                     </div>
                     
                     <div class="space-y-1">
-                      @for (item of getModuleItems(module.id).slice(0, 3); track item.labelKey) {
-                        <div (click)="openEditLessonModal(module.id, item)" class="w-full bg-[#FAF8F5] text-[#0F172A] border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 hover:bg-[#FAF6F0] transition">
+                      @for (item of (expandedModuleLessons()[module.id] ? getModuleItems(module.id) : getModuleItems(module.id).slice(0, 3)); track item.labelKey) {
+                        <div (click)="openEditLessonModal(module.id, item)" class="w-full bg-[#FAF8F5] text-[#0F172A] border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 hover:bg-[#FAF6F0] transition animate-fade-in">
                           <span>{{ item.labelKey }}</span>
                           <span class="material-icons-round text-slate-400 text-sm">edit</span>
                         </div>
                       }
                       @if (getModuleItems(module.id).length > 3) {
-                        <div class="w-full text-center text-[10px] font-bold rounded-xl py-1 border text-[#8C7355] bg-[#FAF6F0] border-[#D4AF37]/15">
-                          + {{ getModuleItems(module.id).length - 3 }} autres leçons...
-                        </div>
+                        @if (expandedModuleLessons()[module.id]) {
+                          <button 
+                            (click)="toggleExpandLessons(module.id)" 
+                            class="w-full text-center text-[9px] font-black rounded-xl py-1.5 border text-[#8C7355] bg-[#FAF6F0] border-[#D4AF37]/25 hover:bg-[#D4AF37]/15 transition cursor-pointer flex items-center justify-center gap-1 uppercase tracking-wider"
+                          >
+                            <span>Réduire les leçons</span>
+                            <span class="material-icons-round text-xs">expand_less</span>
+                          </button>
+                        } @else {
+                          <button 
+                            (click)="toggleExpandLessons(module.id)" 
+                            class="w-full text-center text-[9px] font-black rounded-xl py-1.5 border text-[#8C7355] bg-[#FAF6F0] border-[#D4AF37]/25 hover:bg-[#D4AF37]/15 transition cursor-pointer flex items-center justify-center gap-1 uppercase tracking-wider"
+                          >
+                            <span>+ {{ getModuleItems(module.id).length - 3 }} autres leçons...</span>
+                            <span class="material-icons-round text-xs">expand_more</span>
+                          </button>
+                        }
                       }
                     </div>
 

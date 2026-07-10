@@ -24,6 +24,16 @@ export class App implements OnInit {
     return mod ? mod.items : [];
   }
 
+  // Expanded lessons per module mapping state
+  readonly expandedModuleLessons = signal<Record<number, boolean>>({});
+
+  toggleExpandLessons(moduleId: number) {
+    this.expandedModuleLessons.update(val => ({
+      ...val,
+      [moduleId]: !val[moduleId]
+    }));
+  }
+
   // Module Creation Modal State
   readonly showAddModuleModal = signal<boolean>(false);
   newModuleTitle = '';
