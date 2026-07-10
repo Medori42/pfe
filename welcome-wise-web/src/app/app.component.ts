@@ -169,6 +169,47 @@ export class App implements OnInit {
     }
   }
 
+  onModuleDocsSelected(moduleId: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const newDocs: Array<{ name: string; fileName: string }> = [];
+    for (let i = 0; i < input.files.length; i++) {
+      const file = input.files[i];
+      newDocs.push({
+        name: file.name,
+        fileName: file.name
+      });
+    }
+
+    this.onboardingService.modules.update(mods => {
+      return mods.map(m => {
+        if (m.id === moduleId) {
+          const existingDocs = m.documents || [];
+          const filteredNewDocs = newDocs.filter(nd => !existingDocs.some(ed => ed.name === nd.name));
+          return { ...m, documents: [...existingDocs, ...filteredNewDocs] };
+        }
+        return m;
+      });
+    });
+
+    this.showToast(`${newDocs.length} document(s) ajouté(s) avec succès !`);
+    input.value = '';
+  }
+
+  removeModuleDocument(moduleId: number, docName: string) {
+    this.onboardingService.modules.update(mods => {
+      return mods.map(m => {
+        if (m.id === moduleId) {
+          const existingDocs = m.documents || [];
+          return { ...m, documents: existingDocs.filter(d => d.name !== docName) };
+        }
+        return m;
+      });
+    });
+    this.showToast(`Document retiré !`);
+  }
+
   searchAndScrollModule(event: Event) {
     const query = (event.target as HTMLInputElement).value.toLowerCase().trim();
     if (!query) return;

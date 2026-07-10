@@ -1607,13 +1607,39 @@
                       </div>
 
                     </div>
+
+                    <!-- Documents Joints Section -->
+                    <div class="mb-4 bg-[#FAF6F0]/40 border border-[#D4AF37]/15 rounded-2xl p-2.5 relative">
+                      <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block text-left mb-2">Documents du Module</span>
+                      <div class="space-y-1.5">
+                        @if (module.documents && module.documents.length > 0) {
+                          @for (doc of module.documents; track doc.name) {
+                            <div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl p-1.5 shadow-sm">
+                              <div class="flex items-center gap-2 max-w-[80%]">
+                                <span class="material-icons-round text-red-500 text-sm">picture_as_pdf</span>
+                                <span class="text-[8.5px] font-extrabold text-[#0F172A] truncate text-left">{{ doc.name }}</span>
+                              </div>
+                              <button (click)="removeModuleDocument(module.id, doc.name)" class="text-slate-400 hover:text-red-500 w-5 h-5 flex items-center justify-center rounded-full bg-slate-50 hover:bg-red-50 cursor-pointer border-0 transition-colors">
+                                <span class="material-icons-round text-xs">close</span>
+                              </button>
+                            </div>
+                          }
+                        } @else {
+                          <div class="text-[8.5px] text-slate-400 font-bold italic text-left py-1">
+                            Aucun document PDF associé.
+                          </div>
+                        }
+                      </div>
+                    </div>
                     
                     <div class="grid grid-cols-2 gap-2 mb-4">
-                      <button (click)="showToast('Ajouter une vidéo au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                      <button (click)="showToast('Ajouter une vidéo au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
                         <span class="material-icons-round text-xs">video_call</span>
                         <span>Ajouter Vidéo</span>
                       </button>
-                      <button (click)="showToast('Ajouter un document au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                      
+                      <input type="file" accept="application/pdf" multiple #docFileInput (change)="onModuleDocsSelected(module.id, $event)" class="hidden">
+                      <button (click)="docFileInput.click()" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
                         <span class="material-icons-round text-xs">add_to_photos</span>
                         <span>Ajouter Doc</span>
                       </button>
