@@ -2,7 +2,7 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { OnboardingService } from './onboarding.service';
+import { OnboardingService, OnboardingItem } from './onboarding.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -58,6 +58,182 @@ export class App implements OnInit {
     });
     this.showAddLessonModal.set(false);
     this.showToast(`Leçon "${this.newLessonName}" ajoutée avec succès !`);
+  }
+
+  readonly showEditLessonModal = signal<boolean>(false);
+  readonly selectedModuleIdForLessonEdit = signal<number | null>(null);
+  readonly selectedLessonForEdit = signal<OnboardingItem | null>(null);
+  
+  lessonEditExplanation = '';
+  lessonEditVideoFileName = '';
+  readonly lessonEditResources = signal<Array<{ name: string; size: string }>>([]);
+  readonly lessonEditPhotos = signal<Array<{ name: string; size: string; count: number }>>([]);
+  
+  readonly isLessonVideoDragging = signal<boolean>(false);
+  readonly isLessonResourceDragging = signal<boolean>(false);
+  readonly isLessonPhotoDragging = signal<boolean>(false);
+
+  openEditLessonModal(moduleId: number, lesson: OnboardingItem) {
+    this.selectedModuleIdForLessonEdit.set(moduleId);
+    this.selectedLessonForEdit.set(lesson);
+    this.lessonEditExplanation = lesson.explanation || '';
+    this.lessonEditVideoFileName = lesson.videoUrl ? lesson.videoUrl.replace('assets/videos/', '') : '';
+    this.lessonEditResources.set(lesson.resources ? [...lesson.resources] : []);
+    this.lessonEditPhotos.set(lesson.photos ? [...lesson.photos] : []);
+    this.showEditLessonModal.set(true);
+  }
+
+  onLessonVideoFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.lessonEditVideoFileName = input.files[0].name;
+    }
+  }
+
+  onLessonVideoFileDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonVideoDragging.set(false);
+    if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+      this.lessonEditVideoFileName = event.dataTransfer.files[0].name;
+    }
+  }
+
+  onLessonVideoDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonVideoDragging.set(true);
+  }
+
+  onLessonVideoDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonVideoDragging.set(false);
+  }
+
+  onLessonResourceDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonResourceDragging.set(true);
+  }
+
+  onLessonResourceDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonResourceDragging.set(false);
+  }
+
+  onLessonPhotoDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonPhotoDragging.set(true);
+  }
+
+  onLessonPhotoDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonPhotoDragging.set(false);
+  }
+
+  removeLessonVideo() {
+    this.lessonEditVideoFileName = '';
+    this.showToast("Vidéo retirée !");
+  }
+
+  onLessonResourceSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const list = this.lessonEditResources();
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const sizeStr = (file.size / (1024 * 1024)).toFixed(1) + " Mo";
+        if (!list.some(r => r.name === file.name)) {
+          list.push({ name: file.name, size: sizeStr });
+        }
+      }
+      this.lessonEditResources.set([...list]);
+    }
+  }
+
+  onLessonResourceDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonResourceDragging.set(false);
+    if (event.dataTransfer && event.dataTransfer.files) {
+      const list = this.lessonEditResources();
+      for (let i = 0; i < event.dataTransfer.files.length; i++) {
+        const file = event.dataTransfer.files[i];
+        const sizeStr = (file.size / (1024 * 1024)).toFixed(1) + " Mo";
+        if (!list.some(r => r.name === file.name)) {
+          list.push({ name: file.name, size: sizeStr });
+        }
+      }
+      this.lessonEditResources.set([...list]);
+    }
+  }
+
+  removeLessonResource(name: string) {
+    this.lessonEditResources.update(list => list.filter(r => r.name !== name));
+    this.showToast("Ressource PDF retirée !");
+  }
+
+  onLessonPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const list = this.lessonEditPhotos();
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const sizeStr = (file.size / (1024 * 1024)).toFixed(1) + " Mo";
+        if (!list.some(p => p.name === file.name)) {
+          list.push({ name: file.name, size: sizeStr, count: 1 });
+        }
+      }
+      this.lessonEditPhotos.set([...list]);
+    }
+  }
+
+  onLessonPhotoDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isLessonPhotoDragging.set(false);
+    if (event.dataTransfer && event.dataTransfer.files) {
+      const list = this.lessonEditPhotos();
+      for (let i = 0; i < event.dataTransfer.files.length; i++) {
+        const file = event.dataTransfer.files[i];
+        const sizeStr = (file.size / (1024 * 1024)).toFixed(1) + " Mo";
+        if (!list.some(p => p.name === file.name)) {
+          list.push({ name: file.name, size: sizeStr, count: 1 });
+        }
+      }
+      this.lessonEditPhotos.set([...list]);
+    }
+  }
+
+  removeLessonPhoto(name: string) {
+    this.lessonEditPhotos.update(list => list.filter(p => p.name !== name));
+    this.showToast("Photo retirée !");
+  }
+
+  submitEditLesson() {
+    const moduleId = this.selectedModuleIdForLessonEdit();
+    const lesson = this.selectedLessonForEdit();
+    if (!moduleId || !lesson) return;
+
+    this.onboardingService.modules.update(mods => {
+      return mods.map(m => {
+        if (m.id === moduleId) {
+          const updatedItems = m.items.map(item => {
+            if (item.labelKey === lesson.labelKey) {
+              return {
+                ...item,
+                explanation: this.lessonEditExplanation,
+                videoUrl: this.lessonEditVideoFileName ? 'assets/videos/' + this.lessonEditVideoFileName : undefined,
+                videoDuration: this.lessonEditVideoFileName ? '10:00' : undefined,
+                resources: this.lessonEditResources().length > 0 ? this.lessonEditResources() : undefined,
+                photos: this.lessonEditPhotos().length > 0 ? this.lessonEditPhotos() : undefined
+              };
+            }
+            return item;
+          });
+          return { ...m, items: updatedItems };
+        }
+        return m;
+      });
+    });
+
+    this.showToast(`Contenu de la leçon mis à jour !`);
+    this.showEditLessonModal.set(false);
   }
 
   openAddModuleModal() {

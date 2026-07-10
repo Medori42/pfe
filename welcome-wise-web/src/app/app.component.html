@@ -1657,7 +1657,7 @@
                     
                     <div class="grid grid-cols-2 gap-2 mb-4">
                       <button (click)="openAddVideoModal(module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
-                        <span class="material-icons-round text-xs">video_call</span>
+                      <span class="material-icons-round text-xs">video_call</span>
                         <span>Ajouter Vidéo</span>
                       </button>
                       
@@ -1669,9 +1669,9 @@
                     
                     <div class="space-y-1">
                       @for (item of getModuleItems(module.id).slice(0, 3); track item.labelKey) {
-                        <div class="w-full bg-[#FAF8F5] text-[#0F172A] border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 transition">
+                        <div (click)="openEditLessonModal(module.id, item)" class="w-full bg-[#FAF8F5] text-[#0F172A] border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 hover:bg-[#FAF6F0] transition">
                           <span>{{ item.labelKey }}</span>
-                          <span class="material-icons-round text-slate-400 text-sm">expand_more</span>
+                          <span class="material-icons-round text-slate-400 text-sm">edit</span>
                         </div>
                       }
                       @if (getModuleItems(module.id).length > 3) {
@@ -1964,6 +1964,168 @@
                     class="w-full rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
                   >
                     Fermer
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Modal for Editing a Lesson (Admin Lesson Config) -->
+            <div *ngIf="showEditLessonModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div class="bg-white rounded-[32px] w-full max-w-lg p-6 shadow-2xl border border-white/50 relative animate-fade-in flex flex-col max-h-[85vh]">
+                <button (click)="showEditLessonModal.set(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer border-0">
+                  <span class="material-icons-round text-base">close</span>
+                </button>
+                
+                <div class="flex items-center gap-2.5 mb-4 border-b border-slate-100 pb-3 flex-shrink-0">
+                  <span class="material-icons-round text-xl text-[#8C7355]">edit_note</span>
+                  <h4 class="text-slate-800 font-extrabold text-lg font-display">Configurer la Leçon : {{ selectedLessonForEdit()?.labelKey }}</h4>
+                </div>
+                
+                <div class="space-y-4 overflow-y-auto pr-1 flex-grow scrollbar-thin">
+                  
+                  <!-- 1. Explication de la Leçon -->
+                  <div>
+                    <label class="block text-left text-xs font-black text-slate-500 mb-1.5 uppercase tracking-wider">Explication de la Leçon *</label>
+                    <textarea 
+                      [(ngModel)]="lessonEditExplanation"
+                      placeholder="Saisissez le texte explicatif de cette leçon..." 
+                      rows="3"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all resize-none"
+                    ></textarea>
+                  </div>
+
+                  <!-- 2. Zone Vidéo -->
+                  <div class="border-t border-slate-100 pt-3">
+                    <label class="block text-left text-xs font-black text-slate-500 mb-1.5 uppercase tracking-wider">Fichier Vidéo de la Leçon</label>
+                    
+                    @if (lessonEditVideoFileName) {
+                      <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-2 shadow-sm">
+                        <div class="flex items-center gap-2 max-w-[80%]">
+                          <span class="material-icons-round text-blue-500 text-sm">video_file</span>
+                          <span class="text-[9px] font-extrabold text-[#0F172A] truncate text-left">{{ lessonEditVideoFileName }}</span>
+                        </div>
+                        <button 
+                          (click)="removeLessonVideo()" 
+                          class="text-slate-400 hover:text-red-500 w-6 h-6 flex items-center justify-center rounded-full bg-white hover:bg-red-55 border border-slate-200 hover:border-red-200 transition-all cursor-pointer"
+                          title="Supprimer la vidéo"
+                        >
+                          <span class="material-icons-round text-sm">delete</span>
+                        </button>
+                      </div>
+                    } @else {
+                      <div 
+                        (drop)="onLessonVideoFileDrop($event)" 
+                        (dragover)="onLessonVideoDragOver($event)" 
+                        (dragleave)="onLessonVideoDragLeave($event)"
+                        [class.bg-[#FAF6F0]]="isLessonVideoDragging()"
+                        [class.border-[#D4AF37]]="isLessonVideoDragging()"
+                        (click)="lessonVideoFileInput.click()"
+                        class="w-full min-h-[90px] border-2 border-dashed border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer transition-all bg-slate-50/50 hover:bg-[#FAF8F5]/50 select-none text-center"
+                      >
+                        <input type="file" #lessonVideoFileInput class="hidden" accept="video/*" (change)="onLessonVideoFileSelected($event)">
+                        <span class="material-icons-round text-slate-400 text-2xl mb-0.5">movie</span>
+                        <span class="text-[10px] font-bold text-slate-600">Déposez une vidéo ici ou cliquez</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- 3. Ressources PDF (Ajout Multiple) -->
+                  <div class="border-t border-slate-100 pt-3">
+                    <label class="block text-left text-xs font-black text-slate-500 mb-1.5 uppercase tracking-wider">Ressources PDF (Documents joints)</label>
+                    
+                    <div 
+                      (drop)="onLessonResourceDrop($event)" 
+                      (dragover)="onLessonResourceDragOver($event)" 
+                      (dragleave)="onLessonResourceDragLeave($event)"
+                      [class.bg-[#FAF6F0]]="isLessonResourceDragging()"
+                      [class.border-[#D4AF37]]="isLessonResourceDragging()"
+                      (click)="lessonResourceFileInput.click()"
+                      class="w-full min-h-[90px] border-2 border-dashed border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer transition-all bg-slate-50/50 hover:bg-[#FAF8F5]/50 select-none text-center mb-2"
+                    >
+                      <input type="file" #lessonResourceFileInput class="hidden" accept="application/pdf" multiple (change)="onLessonResourceSelected($event)">
+                      <span class="material-icons-round text-slate-400 text-2xl mb-0.5">picture_as_pdf</span>
+                      <span class="text-[10px] font-bold text-slate-600">Déposez des ressources PDF ici ou cliquez</span>
+                    </div>
+
+                    <!-- PDF List -->
+                    <div class="space-y-1">
+                      @if (lessonEditResources().length > 0) {
+                        @for (res of lessonEditResources(); track res.name) {
+                          <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-2 shadow-sm">
+                            <div class="flex items-center gap-2 max-w-[80%]">
+                              <span class="material-icons-round text-red-500 text-sm">picture_as_pdf</span>
+                              <div class="overflow-hidden leading-none">
+                                <span class="text-[9px] font-extrabold text-[#0F172A] block truncate text-left">{{ res.name }}</span>
+                                <span class="text-[7.5px] text-slate-400 font-bold block mt-0.5">{{ res.size }}</span>
+                              </div>
+                            </div>
+                            <button 
+                              (click)="removeLessonResource(res.name)" 
+                              class="text-slate-400 hover:text-red-500 w-6 h-6 flex items-center justify-center rounded-full bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all cursor-pointer"
+                              title="Retirer cette ressource"
+                            >
+                              <span class="material-icons-round text-sm">delete</span>
+                            </button>
+                          </div>
+                        }
+                      }
+                    </div>
+                  </div>
+
+                  <!-- 4. Photos de la Leçon (Ajout Multiple) -->
+                  <div class="border-t border-slate-100 pt-3">
+                    <label class="block text-left text-xs font-black text-slate-500 mb-1.5 uppercase tracking-wider">Photos et Illustrations de la Leçon</label>
+                    
+                    <div 
+                      (drop)="onLessonPhotoDrop($event)" 
+                      (dragover)="onLessonPhotoDragOver($event)" 
+                      (dragleave)="onLessonPhotoDragLeave($event)"
+                      [class.bg-[#FAF6F0]]="isLessonPhotoDragging()"
+                      [class.border-[#D4AF37]]="isLessonPhotoDragging()"
+                      (click)="lessonPhotoFileInput.click()"
+                      class="w-full min-h-[90px] border-2 border-dashed border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer transition-all bg-slate-50/50 hover:bg-[#FAF8F5]/50 select-none text-center mb-2"
+                    >
+                      <input type="file" #lessonPhotoFileInput class="hidden" accept="image/*" multiple (change)="onLessonPhotoSelected($event)">
+                      <span class="material-icons-round text-slate-400 text-2xl mb-0.5">photo_library</span>
+                      <span class="text-[10px] font-bold text-slate-600">Déposez des photos d'illustrations ou cliquez</span>
+                    </div>
+
+                    <!-- Photos List -->
+                    <div class="grid grid-cols-2 gap-2">
+                      @if (lessonEditPhotos().length > 0) {
+                        @for (p of lessonEditPhotos(); track p.name) {
+                          <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-2 shadow-sm">
+                            <div class="flex items-center gap-1.5 max-w-[70%]">
+                              <span class="material-icons-round text-emerald-500 text-sm">image</span>
+                              <span class="text-[9px] font-extrabold text-[#0F172A] truncate text-left">{{ p.name }}</span>
+                            </div>
+                            <button 
+                              (click)="removeLessonPhoto(p.name)" 
+                              class="text-slate-400 hover:text-red-500 w-6 h-6 flex items-center justify-center rounded-full bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all cursor-pointer"
+                              title="Retirer cette photo"
+                            >
+                              <span class="material-icons-round text-sm">delete</span>
+                            </button>
+                          </div>
+                        }
+                      }
+                    </div>
+                  </div>
+
+                </div>
+                
+                <div class="flex items-center gap-3 mt-6 border-t border-slate-100 pt-4 flex-shrink-0">
+                  <button 
+                    (click)="showEditLessonModal.set(false)" 
+                    class="flex-1 rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    (click)="submitEditLesson()" 
+                    class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
+                  >
+                    Enregistrer
                   </button>
                 </div>
               </div>
