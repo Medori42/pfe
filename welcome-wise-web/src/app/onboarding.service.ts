@@ -33,6 +33,7 @@ export interface OnboardingModule {
   items: OnboardingItem[];
   interlocutorsList?: Interlocutor[];
   documents?: Array<{ name: string; fileName: string }>;
+  videos?: Array<{ name: string; url: string }>;
 }
 
 export interface Badge {

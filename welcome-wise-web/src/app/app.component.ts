@@ -257,6 +257,102 @@ export class App implements OnInit {
     this.showToast(`Document retiré !`);
   }
 
+  readonly showAddVideoModal = signal<boolean>(false);
+  readonly activeModuleIdForVideo = signal<number | null>(null);
+  newVideoName = '';
+  newVideoFileName = '';
+  readonly isVideoDragging = signal<boolean>(false);
+
+  openAddVideoModal(moduleId: number) {
+    this.activeModuleIdForVideo.set(moduleId);
+    this.newVideoName = '';
+    this.newVideoFileName = '';
+    this.showAddVideoModal.set(true);
+  }
+
+  onVideoFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.newVideoFileName = file.name;
+      if (!this.newVideoName) {
+        this.newVideoName = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
+  }
+
+  onVideoFileDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isVideoDragging.set(false);
+    if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+      const file = event.dataTransfer.files[0];
+      this.newVideoFileName = file.name;
+      if (!this.newVideoName) {
+        this.newVideoName = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
+  }
+
+  onVideoDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isVideoDragging.set(true);
+  }
+
+  onVideoDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isVideoDragging.set(false);
+  }
+
+  submitAddVideo() {
+    const moduleId = this.activeModuleIdForVideo();
+    if (!moduleId) return;
+    if (!this.newVideoName.trim()) {
+      this.showToast("Veuillez saisir un titre pour la vidéo.");
+      return;
+    }
+    if (!this.newVideoFileName) {
+      this.showToast("Veuillez charger un fichier vidéo.");
+      return;
+    }
+
+    this.onboardingService.modules.update(mods => {
+      return mods.map(m => {
+        if (m.id === moduleId) {
+          const existingVideos = m.videos || [];
+          return {
+            ...m,
+            videos: [...existingVideos, { name: this.newVideoName, url: 'assets/videos/' + this.newVideoFileName }]
+          };
+        }
+        return m;
+      });
+    });
+
+    this.showToast(`Vidéo "${this.newVideoName}" ajoutée avec succès !`);
+    this.newVideoName = '';
+    this.newVideoFileName = '';
+  }
+
+  removeModuleVideo(moduleId: number, videoName: string) {
+    this.onboardingService.modules.update(mods => {
+      return mods.map(m => {
+        if (m.id === moduleId) {
+          const existingVideos = m.videos || [];
+          return { ...m, videos: existingVideos.filter(v => v.name !== videoName) };
+        }
+        return m;
+      });
+    });
+    this.showToast(`Vidéo retirée !`);
+  }
+
+  getActiveModuleVideos() {
+    const moduleId = this.activeModuleIdForVideo();
+    if (!moduleId) return [];
+    const module = this.onboardingService.modules().find(m => m.id === moduleId);
+    return module ? (module.videos || []) : [];
+  }
+
   searchAndScrollModule(event: Event) {
     const query = (event.target as HTMLInputElement).value.toLowerCase().trim();
     if (!query) return;
