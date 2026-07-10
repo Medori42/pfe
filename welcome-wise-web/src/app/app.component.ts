@@ -246,6 +246,23 @@ export class App implements OnInit {
     this.showEditLessonModal.set(false);
   }
 
+  deleteLesson(moduleId: number, lessonLabelKey: string) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer la leçon "${lessonLabelKey}" ?`)) {
+      this.onboardingService.modules.update(mods => {
+        return mods.map(m => {
+          if (m.id === moduleId) {
+            return {
+              ...m,
+              items: m.items.filter(item => item.labelKey !== lessonLabelKey)
+            };
+          }
+          return m;
+        });
+      });
+      this.showToast(`Leçon "${lessonLabelKey}" supprimée !`);
+    }
+  }
+
   openAddModuleModal() {
     this.newModuleTitle = '';
     this.newModuleSubtitle = '';

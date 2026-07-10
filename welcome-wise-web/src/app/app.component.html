@@ -1670,8 +1670,17 @@
                     <div class="space-y-1">
                       @for (item of (expandedModuleLessons()[module.id] ? getModuleItems(module.id) : getModuleItems(module.id).slice(0, 3)); track item.labelKey) {
                         <div (click)="openEditLessonModal(module.id, item)" class="w-full bg-[#FAF8F5] text-[#0F172A] border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 hover:bg-[#FAF6F0] transition animate-fade-in">
-                          <span>{{ item.labelKey }}</span>
-                          <span class="material-icons-round text-slate-400 text-sm">edit</span>
+                          <span class="truncate pr-2">{{ item.labelKey }}</span>
+                          <div class="flex items-center gap-1.5 flex-shrink-0">
+                            <span class="material-icons-round text-slate-400 text-sm">edit</span>
+                            <button 
+                              (click)="deleteLesson(module.id, item.labelKey); $event.stopPropagation()" 
+                              class="text-slate-400 hover:text-red-500 w-5 h-5 flex items-center justify-center rounded-full bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors cursor-pointer"
+                              title="Supprimer la leçon"
+                            >
+                              <span class="material-icons-round text-[11px]">delete</span>
+                            </button>
+                          </div>
                         </div>
                       }
                       @if (getModuleItems(module.id).length > 3) {
