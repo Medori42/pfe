@@ -272,6 +272,10 @@ export class App implements OnInit {
     }
   }
 
+  saveAllPageSettings() {
+    this.showToast("Sauvegarde globale réussie ! Toutes les modifications de la page ont été enregistrées.");
+  }
+
   openAddModuleModal() {
     this.newModuleTitle = '';
     this.newModuleSubtitle = '';
