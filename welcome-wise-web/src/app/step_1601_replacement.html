@@ -1,0 +1,251 @@
+            <!-- Custom Modal for Adding a Document (PDF) -->
+            <div *ngIf="showAddDocModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div class="bg-white rounded-[32px] w-full max-w-md p-6 shadow-2xl border border-white/50 relative animate-fade-in">
+                <button (click)="showAddDocModal.set(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer border-0">
+                  <span class="material-icons-round text-base">close</span>
+                </button>
+                
+                <div class="flex items-center gap-2.5 mb-4 border-b border-slate-100 pb-3">
+                  <span class="material-icons-round text-xl text-[#8C7355]">picture_as_pdf</span>
+                  <h4 class="text-slate-800 font-extrabold text-lg font-display">Ajouter un Document PDF</h4>
+                </div>
+                
+                <div class="space-y-4">
+                  <!-- Drag and Drop Zone -->
+                  <div 
+                    (dragover)="$event.preventDefault(); dragOver = true"
+                    (dragleave)="dragOver = false"
+                    (drop)="onFileDropped($event)"
+                    [class.border-[#D4AF37]]="dragOver"
+                    [class.bg-[#FAF6F0]/30]="dragOver"
+                    class="border-2 border-dashed border-slate-200 hover:border-[#D4AF37]/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-slate-50/50 flex flex-col items-center justify-center relative group"
+                  >
+                    <!-- Trigger file browser on click of the box -->
+                    <input 
+                      type="file" 
+                      accept="application/pdf"
+                      (change)="onFileSelected($event)"
+                      class="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    
+                    <span class="material-icons-round text-4xl text-[#8C7355] mb-2 group-hover:scale-110 transition-transform">cloud_upload</span>
+                    
+                    <div class="text-xs font-black text-slate-700">
+                      {{ draggedFile ? draggedFile.name : 'Glissez-déposez votre fichier PDF ici' }}
+                    </div>
+                    <div class="text-[10px] text-slate-400 mt-1">
+                      {{ draggedFile ? 'Fichier PDF prêt pour association' : 'ou cliquez pour parcourir vos fichiers' }}
+                    </div>
+                  </div>
+
+                  <!-- Document Name Field -->
+                  <div>
+                    <label class="block text-left text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Nom personnalisé du Document *</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="newDocName"
+                      placeholder="Ex: Manuel d'Intégration BTP..." 
+                      class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                    />
+                  </div>
+
+                  <!-- Currently Associated Documents List -->
+                  <div *ngIf="getModuleDocs(activeDocModuleId).length > 0" class="mt-4 border-t border-slate-100 pt-3 text-left">
+                    <label class="block text-[10px] font-black text-[#8C7355] mb-2 uppercase tracking-wider">Documents associés ({{ getModuleDocs(activeDocModuleId).length }})</label>
+                    <div class="space-y-1.5 max-h-32 overflow-y-auto pr-1 scrollbar-thin">
+                      @for (doc of getModuleDocs(activeDocModuleId); track doc.name) {
+                        <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs animate-fade-in">
+                          <div class="flex items-center gap-2 truncate">
+                            <span class="material-icons-round text-base text-red-500">picture_as_pdf</span>
+                            <div class="truncate leading-none">
+                              <span class="font-extrabold text-slate-700 block text-[9px] truncate">{{ doc.name }}</span>
+                              <span class="text-[8px] text-slate-400 block truncate mt-0.5">{{ doc.fileName }}</span>
+                            </div>
+                          </div>
+                          <button (click)="removeModuleDoc(activeDocModuleId, doc.name)" class="text-slate-400 hover:text-red-500 w-5 h-5 flex items-center justify-center rounded-full bg-slate-100 hover:bg-red-50 cursor-pointer border-0 transition-colors">
+                            <span class="material-icons-round text-[13px]">delete</span>
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3 mt-6">
+                  <button 
+                    (click)="showAddDocModal.set(false)" 
+                    class="flex-1 rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    (click)="submitAddDoc()" 
+                    class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
+                  >
+                    Associer Document
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Modal for Creating / Editing a Lesson with Full Content (Video, Explication, Ressources, Photos) -->
+            <div *ngIf="showLessonEditorModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div class="bg-white rounded-[32px] w-full max-w-2xl p-6 shadow-2xl border border-white/50 relative animate-fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+                <button (click)="showLessonEditorModal.set(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer border-0">
+                  <span class="material-icons-round text-base">close</span>
+                </button>
+                
+                <div class="flex items-center gap-2.5 mb-6 border-b border-slate-100 pb-3">
+                  <span class="material-icons-round text-xl text-[#8C7355]">{{ activeEditorLessonIndex === -1 ? 'playlist_add' : 'edit' }}</span>
+                  <h4 class="text-slate-800 font-extrabold text-lg font-display">
+                    {{ activeEditorLessonIndex === -1 ? 'Créer une Nouvelle Leçon' : 'Modifier la Leçon' }}
+                  </h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  <!-- Left Column: Title, Video & Text Description -->
+                  <div class="space-y-4">
+                    <!-- Lesson Title -->
+                    <div>
+                      <label class="block text-left text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-wider">Titre de la Leçon *</label>
+                      <input 
+                        type="text" 
+                        [(ngModel)]="editorLessonTitle"
+                        placeholder="Ex: Équipements de Protection Individuelle..." 
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                      />
+                    </div>
+
+                    <!-- Video Explanatory URL -->
+                    <div>
+                      <label class="block text-left text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-wider">URL Vidéo d'Explication</label>
+                      <div class="relative">
+                        <input 
+                          type="text" 
+                          [(ngModel)]="editorLessonVideoUrl"
+                          placeholder="Ex: https://www.w3schools.com/html/mov_bbb.mp4" 
+                          class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-9 pr-3 p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                        />
+                        <span class="material-icons-round text-slate-400 text-sm absolute left-3.5 top-1/2 transform -translate-y-1/2">play_circle</span>
+                      </div>
+                    </div>
+
+                    <!-- Explanation Summary -->
+                    <div>
+                      <label class="block text-left text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-wider">Explication de la Leçon</label>
+                      <textarea 
+                        rows="4"
+                        [(ngModel)]="editorLessonExplanation"
+                        placeholder="Entrez le texte décrivant la leçon et les objectifs..." 
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all resize-none"
+                      ></textarea>
+                    </div>
+
+                    <!-- Key Point Banner -->
+                    <div>
+                      <label class="block text-left text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-wider">Point Clé (Sécurité / Retenir)</label>
+                      <textarea 
+                        rows="3"
+                        [(ngModel)]="editorLessonKeyPoint"
+                        placeholder="Ex: Le non-port des EPI obligatoires fait l'objet d'un avertissement..." 
+                        class="w-full bg-[#FAF6F0]/20 border border-[#D4AF37]/20 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 transition-all resize-none"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Right Column: Resources & Photos List -->
+                  <div class="space-y-4 flex flex-col justify-between">
+                    <div>
+                      <!-- Resources (PDF) Section -->
+                      <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                          <label class="block text-left text-[10px] font-black text-slate-500 uppercase tracking-wider">Ressources (PDF)</label>
+                          <button (click)="addEditorResource()" class="px-2 py-0.5 bg-[#FAF6F0] hover:bg-[#D4AF37]/15 border border-[#D4AF37]/25 text-[#8C7355] rounded-lg text-[8px] font-bold transition cursor-pointer flex items-center gap-0.5">
+                            <span class="material-icons-round text-[9px]">add</span>
+                            <span>Ajouter PDF</span>
+                          </button>
+                        </div>
+                        
+                        <div class="space-y-1.5 max-h-[140px] overflow-y-auto scrollbar-thin">
+                          @if (editorLessonResources.length > 0) {
+                            @for (res of editorLessonResources; track res.name; let idx = $index) {
+                              <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-2 text-[10px] font-bold">
+                                <div class="flex items-center gap-1.5 truncate">
+                                  <span class="material-icons-round text-red-500 text-sm">picture_as_pdf</span>
+                                  <span class="truncate text-slate-700 text-[9px]">{{ res.name }}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                  <span class="text-[8px] text-slate-400">{{ res.size }}</span>
+                                  <button (click)="removeEditorResource(idx)" class="text-slate-400 hover:text-red-500 cursor-pointer border-0 bg-transparent flex items-center justify-center p-0.5">
+                                    <span class="material-icons-round text-xs">close</span>
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          } @else {
+                            <div class="text-center p-3 text-[10px] text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                              Aucune ressource associée
+                            </div>
+                          }
+                        </div>
+                      </div>
+
+                      <!-- Photos (Image Set) Section -->
+                      <div>
+                        <div class="flex items-center justify-between mb-2">
+                          <label class="block text-left text-[10px] font-black text-slate-500 uppercase tracking-wider">Photos (Image Set)</label>
+                          <button (click)="addEditorPhoto()" class="px-2 py-0.5 bg-[#FAF6F0] hover:bg-[#D4AF37]/15 border border-[#D4AF37]/25 text-[#8C7355] rounded-lg text-[8px] font-bold transition cursor-pointer flex items-center gap-0.5">
+                            <span class="material-icons-round text-[9px]">add</span>
+                            <span>Ajouter Lot</span>
+                          </button>
+                        </div>
+
+                        <div class="space-y-1.5 max-h-[140px] overflow-y-auto scrollbar-thin">
+                          @if (editorLessonPhotos.length > 0) {
+                            @for (photo of editorLessonPhotos; track photo.name; let idx = $index) {
+                              <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-2 text-[10px] font-bold">
+                                <div class="flex items-center gap-1.5 truncate">
+                                  <span class="material-icons-round text-emerald-500 text-sm">photo_library</span>
+                                  <span class="truncate text-slate-700 text-[9px]">{{ photo.name }}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                  <span class="text-[8px] text-slate-400">{{ photo.count }} Photos ({{ photo.size }})</span>
+                                  <button (click)="removeEditorPhoto(idx)" class="text-slate-400 hover:text-red-500 cursor-pointer border-0 bg-transparent flex items-center justify-center p-0.5">
+                                    <span class="material-icons-round text-xs">close</span>
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          } @else {
+                            <div class="text-center p-3 text-[10px] text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                              Aucun lot d'images associé
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                      <button 
+                        (click)="showLessonEditorModal.set(false)" 
+                        class="flex-1 rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
+                      >
+                        Annuler
+                      </button>
+                      <button 
+                        (click)="submitSaveLesson()" 
+                        class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
+                      >
+                        Enregistrer la Leçon
+                      </button>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+<!-- TOAST NOTIFICATION -->

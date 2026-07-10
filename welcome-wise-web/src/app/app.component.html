@@ -1,0 +1,1965 @@
+<!-- DEV SWITCHER FOR JURY -->
+@if ((systemRole() === 'admin' && adminState() === 'login') || (systemRole() === 'employee' && (currentUrl() === '/login' || currentUrl() === '/' || currentUrl() === ''))) {
+  <div class="fixed top-3 left-3 z-50 bg-[#0F172A]/90 backdrop-blur-md border border-[#D4AF37]/50 rounded-full p-1 shadow-xl flex items-center gap-1 select-none text-[10px] font-bold">
+    <span class="text-amber-400 px-3 uppercase tracking-wider">DEV MODE</span>
+    <div class="relative bg-slate-950/60 rounded-full p-0.5 flex items-center w-[180px] h-7 cursor-pointer" (click)="toggleRole()">
+      <!-- Sliding active pill -->
+      <div 
+        [class.translate-x-[88px]]="systemRole() === 'admin'"
+        [class.translate-x-0]="systemRole() === 'employee'"
+        class="absolute top-0.5 bottom-0.5 left-0.5 w-[88px] bg-gradient-to-r from-[#D4AF37] to-amber-300 rounded-full transition-transform duration-300 shadow"
+      ></div>
+      <!-- Options -->
+      <span 
+        [class.text-[#0F172A]]="systemRole() === 'employee'"
+        [class.text-slate-400]="systemRole() === 'admin'"
+        class="w-[88px] text-center z-10 transition-colors duration-300 font-extrabold text-[10px]"
+      >
+        Employé
+      </span>
+      <span 
+        [class.text-[#0F172A]]="systemRole() === 'admin'"
+        [class.text-slate-400]="systemRole() === 'employee'"
+        class="w-[88px] text-center z-10 transition-colors duration-300 font-extrabold text-[10px]"
+      >
+        Admin / RH
+      </span>
+    </div>
+  </div>
+        }
+
+
+      <!-- MODAL POPUP FOR EDITING AN EMPLOYEE -->
+      @if (selectedEmployeeForEdit(); as emp) {
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div class="bg-white rounded-[32px] max-w-lg w-full p-6 shadow-2xl border-[3px] border-[#D4AF37] relative animate-scale-up">
+            
+            <!-- Close button -->
+            <button (click)="selectedEmployeeForEdit.set(null)" class="absolute top-4 right-4 text-slate-400 hover:text-[#0f172a] transition cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-slate-100">
+              <span class="material-icons-round">close</span>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="mb-5 border-b border-slate-100 pb-3 pr-8">
+              <h3 class="text-xl font-black text-[#0F172A] font-display">Modifier le Collaborateur</h3>
+              <p class="text-xs text-slate-400 font-bold mt-0.5">Modifier les informations de l'employé sélectionné</p>
+            </div>
+
+            <!-- Form Content -->
+            <div class="space-y-4">
+              
+              <!-- Drag & Drop Avatar Zone -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Photo de Profil</label>
+                
+                <div 
+                  (drop)="onEditAvatarDrop($event)" 
+                  (dragover)="onEditAvatarDragOver($event)" 
+                  (dragleave)="onEditAvatarDragLeave($event)"
+                  [class.bg-[#FAF6F0]]="isEditingDragging()"
+                  [class.border-[#D4AF37]]="isEditingDragging() || editEmpAvatar"
+                  (click)="editAvatarInput.click()"
+                  class="w-full min-h-[110px] border-2 border-dashed border-[#D4AF37]/40 hover:border-[#D4AF37] rounded-2xl flex flex-col items-center justify-center p-4 cursor-pointer transition-all bg-slate-50/50 hover:bg-[#FAF8F5]/50 select-none text-center"
+                >
+                  <input type="file" #editAvatarInput class="hidden" accept="image/*" (change)="onEditAvatarFileSelected($event)">
+                  
+                  @if (editEmpAvatar) {
+                    <div class="flex items-center gap-4 text-left w-full px-2">
+                      <img [src]="editEmpAvatar" alt="preview" class="w-14 h-14 rounded-full border-2 border-[#D4AF37] object-cover shadow-sm flex-shrink-0" />
+                      <div>
+                        <span class="text-xs font-extrabold text-emerald-600 block">✓ Image chargée</span>
+                        <span class="text-[10px] text-slate-400 font-bold block mt-0.5">Cliquez pour modifier la photo</span>
+                      </div>
+                    </div>
+                  } @else {
+                    <span class="material-icons-round text-slate-400 text-2xl mb-1">cloud_upload</span>
+                    <span class="text-xs font-bold text-slate-600">Glissez-déposez la photo ici ou cliquez pour parcourir</span>
+                    <span class="text-[9px] text-slate-400 font-bold block mt-0.5">Format supportés : JPG, PNG (Max 2MB)</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Name Input -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Nom Complet</label>
+                <div class="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Ex: Mohamed El Fassi" 
+                    [(ngModel)]="editEmpName"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <!-- Email Input -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Adresse E-mail</label>
+                <div class="relative">
+                  <input 
+                    type="email" 
+                    placeholder="Ex: mohitasaaa@gmail.com" 
+                    [(ngModel)]="editEmpEmail"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <!-- Password Input -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Mot de passe</label>
+                <div class="relative">
+                  <input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    [(ngModel)]="editEmpPassword"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <!-- Role, Department and Status Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Role Selection -->
+                <div>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Rôle</label>
+                  <select 
+                    [(ngModel)]="editEmpRole"
+                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
+                  >
+                    <option value="Collaborateur">Collaborateur</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Chef d'équipe">Chef d'équipe</option>
+                    <option value="Directeur">Directeur</option>
+                    <option value="Stagiaire">Stagiaire</option>
+                  </select>
+                </div>
+
+                <!-- Department Selection -->
+                <div>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Département</label>
+                  <select 
+                    [(ngModel)]="editEmpDepartment"
+                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
+                  >
+                    <option value="Finance">Finance</option>
+                    <option value="BTP">BTP</option>
+                    <option value="SI">SI</option>
+                  </select>
+                </div>
+
+                <!-- Status Selection -->
+                <div>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Statut</label>
+                  <select 
+                    [(ngModel)]="editEmpStatus"
+                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
+                  >
+                    <option value="Actif">Actif</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Complété">Complété</option>
+                  </select>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Modal Footer Buttons -->
+            <div class="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+              <button (click)="selectedEmployeeForEdit.set(null)" class="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-extrabold cursor-pointer transition-colors select-none">
+                Annuler
+              </button>
+              <button (click)="submitEditEmployee()" class="px-5 py-2.5 rounded-full bg-[#1E3A8A] hover:bg-[#0F172A] text-white text-xs font-extrabold cursor-pointer transition-colors shadow-md hover:shadow-lg select-none">
+                Enregistrer les modifications
+              </button>
+            </div>
+
+          </div>
+        </div>
+      }
+
+      <!-- MODAL POPUP FOR ADDING AN EMPLOYEE -->
+      @if (showAddEmployeeModal()) {
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div class="bg-white rounded-[32px] max-w-lg w-full p-6 shadow-2xl border-[3px] border-[#D4AF37] relative animate-scale-up">
+            
+            <!-- Close button -->
+            <button (click)="showAddEmployeeModal.set(false)" class="absolute top-4 right-4 text-slate-400 hover:text-[#0f172a] transition cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-slate-100">
+              <span class="material-icons-round">close</span>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="mb-5 border-b border-slate-100 pb-3 pr-8">
+              <h3 class="text-xl font-black text-[#0F172A] font-display">Nouveau Collaborateur</h3>
+              <p class="text-xs text-slate-400 font-bold mt-0.5">Ajouter un nouvel employé dans le système d'intégration</p>
+            </div>
+
+            <!-- Form Content -->
+            <div class="space-y-4">
+              
+              <!-- Drag & Drop Avatar Zone -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Photo de Profil</label>
+                
+                <div 
+                  (drop)="onAvatarDrop($event)" 
+                  (dragover)="onAvatarDragOver($event)" 
+                  (dragleave)="onAvatarDragLeave($event)"
+                  [class.bg-[#FAF6F0]]="isDragging()"
+                  [class.border-[#D4AF37]]="isDragging() || newEmpAvatar"
+                  (click)="avatarInput.click()"
+                  class="w-full min-h-[110px] border-2 border-dashed border-[#D4AF37]/40 hover:border-[#D4AF37] rounded-2xl flex flex-col items-center justify-center p-4 cursor-pointer transition-all bg-slate-50/50 hover:bg-[#FAF8F5]/50 select-none text-center"
+                >
+                  <input type="file" #avatarInput class="hidden" accept="image/*" (change)="onAvatarFileSelected($event)">
+                  
+                  @if (newEmpAvatar) {
+                    <div class="flex items-center gap-4 text-left w-full px-2">
+                      <img [src]="newEmpAvatar" alt="preview" class="w-14 h-14 rounded-full border-2 border-[#D4AF37] object-cover shadow-sm flex-shrink-0" />
+                      <div>
+                        <span class="text-xs font-extrabold text-emerald-600 block">✓ Image chargée</span>
+                        <span class="text-[10px] text-slate-400 font-bold block mt-0.5">Cliquez pour modifier la photo</span>
+                      </div>
+                    </div>
+                  } @else {
+                    <span class="material-icons-round text-slate-400 text-2xl mb-1">cloud_upload</span>
+                    <span class="text-xs font-bold text-slate-600">Glissez-déposez la photo ici ou cliquez pour parcourir</span>
+                    <span class="text-[9px] text-slate-400 font-bold block mt-0.5">Format supportés : JPG, PNG (Max 2MB)</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Name Input -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Nom Complet</label>
+                <div class="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Ex: Mohamed El Fassi" 
+                    [(ngModel)]="newEmpName"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <!-- Email Input -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Adresse E-mail</label>
+                <div class="relative">
+                  <input 
+                    type="email" 
+                    placeholder="Ex: mohitasaaa@gmail.com" 
+                    [(ngModel)]="newEmpEmail"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <!-- Password Input -->
+              <div>
+                <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Mot de passe</label>
+                <div class="relative">
+                  <input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    [(ngModel)]="newEmpPassword"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <!-- Role, Department and Status Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Role Selection -->
+                <div>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Rôle</label>
+                  <select 
+                    [(ngModel)]="newEmpRole"
+                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
+                  >
+                    <option value="Collaborateur">Collaborateur</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Chef d'équipe">Chef d'équipe</option>
+                    <option value="Directeur">Directeur</option>
+                    <option value="Stagiaire">Stagiaire</option>
+                  </select>
+                </div>
+
+                <!-- Department Selection -->
+                <div>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Département</label>
+                  <select 
+                    [(ngModel)]="newEmpDepartment"
+                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
+                  >
+                    <option value="Finance">Finance</option>
+                    <option value="BTP">BTP</option>
+                    <option value="SI">SI</option>
+                  </select>
+                </div>
+
+                <!-- Status Selection -->
+                <div>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Statut</label>
+                  <select 
+                    [(ngModel)]="newEmpStatus"
+                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
+                  >
+                    <option value="Actif">Actif</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Complété">Complété</option>
+                  </select>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Modal Footer Buttons -->
+            <div class="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+              <button (click)="showAddEmployeeModal.set(false)" class="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-extrabold cursor-pointer transition-colors select-none">
+                Annuler
+              </button>
+              <button (click)="submitAddEmployee()" class="px-5 py-2.5 rounded-full bg-[#1E3A8A] hover:bg-[#0F172A] text-white text-xs font-extrabold cursor-pointer transition-colors shadow-md hover:shadow-lg select-none">
+                Créer le collaborateur
+              </button>
+            </div>
+
+          </div>
+        </div>
+      }
+
+<!-- ========================================== -->
+<!-- 💼 ESPACE EMPLOYÉ                          -->
+<!-- ========================================== -->
+<ng-container *ngIf="systemRole() === 'employee'">
+  <div class="min-h-screen font-sans text-slate-800 flex flex-col relative overflow-hidden">
+    <!-- Beautiful Geometric and Industrial Background Shapes -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+      
+      <!-- LEFT SIDE: Curve path with industrial nodes (Globe, Factory, Gear, Bell, QR) -->
+      <div class="absolute left-[-20px] top-[15%] w-[320px] h-[800px] hidden lg:block">
+        <!-- SVG Curved connector line -->
+        <svg class="absolute inset-0 w-full h-full text-[#8C7355]/35" viewBox="0 0 300 700" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="8 6">
+          <path d="M 50 50 C 250 150, 250 350, 100 450 C 0 520, 50 650, 200 680" />
+        </svg>
+
+        <!-- Node 1: Globe -->
+        <div class="absolute top-[8%] left-[70px] w-13 h-13 rounded-full bg-[#EADCC9] border-2 border-[#8C7355]/40 flex items-center justify-center text-[#5C4630] shadow-md">
+          <span class="material-icons-round text-lg">public</span>
+        </div>
+
+        <!-- Node 2: Factory -->
+        <div class="absolute top-[28%] left-[170px] w-13 h-13 rounded-full bg-[#EADCC9] border-2 border-[#8C7355]/40 flex items-center justify-center text-[#5C4630] shadow-md">
+          <span class="material-icons-round text-lg">precision_manufacturing</span>
+        </div>
+
+        <!-- Node 3: Gear -->
+        <div class="absolute top-[48%] left-[150px] w-13 h-13 rounded-full bg-[#EADCC9] border-2 border-[#8C7355]/40 flex items-center justify-center text-[#5C4630] shadow-md">
+          <span class="material-icons-round text-lg">settings</span>
+        </div>
+
+        <!-- Node 4: Notification Bell -->
+        <div class="absolute top-[68%] left-[60px] w-13 h-13 rounded-full bg-[#EADCC9] border-2 border-[#8C7355]/40 flex items-center justify-center text-[#5C4630] shadow-md">
+          <span class="material-icons-round text-lg">notifications</span>
+        </div>
+
+        <!-- Node 5: QR Code -->
+        <div class="absolute top-[88%] left-[130px] w-13 h-13 rounded-full bg-[#EADCC9] border-2 border-[#8C7355]/40 flex items-center justify-center text-[#5C4630] shadow-md">
+          <span class="material-icons-round text-lg">qr_code_2</span>
+        </div>
+      </div>
+
+      <!-- BOTTOM-LEFT: Network Constellation (blue geometric lines) -->
+      <svg class="absolute bottom-10 left-[-40px] w-[320px] h-[320px] text-sky-600/35" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.25">
+        <circle cx="20" cy="180" r="4.5" fill="currentColor"/>
+        <circle cx="70" cy="140" r="4.5" fill="currentColor"/>
+        <circle cx="120" cy="160" r="4.5" fill="currentColor"/>
+        <circle cx="160" cy="100" r="4.5" fill="currentColor"/>
+        <circle cx="100" cy="60" r="4.5" fill="currentColor"/>
+        <circle cx="40" cy="80" r="4.5" fill="currentColor"/>
+        <line x1="20" y1="180" x2="70" y2="140" />
+        <line x1="70" y1="140" x2="120" y2="160" />
+        <line x1="120" y1="160" x2="160" y2="100" />
+        <line x1="160" y1="100" x2="100" y2="60" />
+        <line x1="100" y1="60" x2="40" y2="80" />
+        <line x1="40" y1="80" x2="20" y2="180" />
+        <line x1="70" y1="140" x2="100" y2="60" />
+        <line x1="40" y1="80" x2="70" y2="140" />
+        <line x1="120" y1="160" x2="100" y2="60" />
+      </svg>
+
+      <!-- TOP-RIGHT: Network Constellation (blue geometric lines) -->
+      <svg class="absolute top-[5px] right-[-50px] w-[350px] h-[350px] text-sky-600/35" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.25">
+        <circle cx="40" cy="40" r="4.5" fill="currentColor"/>
+        <circle cx="90" cy="80" r="4.5" fill="currentColor"/>
+        <circle cx="140" cy="50" r="4.5" fill="currentColor"/>
+        <circle cx="170" cy="110" r="4.5" fill="currentColor"/>
+        <circle cx="110" cy="130" r="4.5" fill="currentColor"/>
+        <circle cx="50" cy="120" r="4.5" fill="currentColor"/>
+        <line x1="40" y1="40" x2="90" y2="80" />
+        <line x1="90" y1="80" x2="140" y2="50" />
+        <line x1="140" y1="50" x2="170" y2="110" />
+        <line x1="170" y1="110" x2="110" y2="130" />
+        <line x1="110" y1="130" x2="50" y2="120" />
+        <line x1="50" y1="120" x2="40" y2="40" />
+        <line x1="90" y1="80" x2="110" y2="130" />
+        <line x1="50" y1="120" x2="90" y2="80" />
+        <line x1="140" y1="50" x2="110" y2="130" />
+      </svg>
+
+      <!-- RIGHT SIDE: FLOATING WIDGETS (Symmetric elements from the mockup reference) -->
+      <div class="absolute right-[20px] top-[24%] flex flex-col gap-10 items-end hidden xl:flex z-10 pointer-events-auto">
+        
+        <!-- Widget 1: Offline Download Badge -->
+        <div class="bg-gradient-to-r from-blue-700 to-blue-900 border-2 border-sky-300 text-white rounded-full px-4 py-2.5 flex items-center gap-3 shadow-lg hover:scale-105 transition-transform cursor-pointer select-none">
+          <div class="text-right">
+            <div class="text-[9px] font-black tracking-wider uppercase">Télécharger Hors-ligne</div>
+            <div class="text-[8px] text-sky-200 font-extrabold mt-0.5">(Download Offline)</div>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+            <span class="material-icons-round text-base">cloud_download</span>
+          </div>
+        </div>
+
+        <!-- Widget 2: Ask AI Chat snippet widget -->
+        <div class="bg-white/95 rounded-2xl border border-slate-100 p-3 shadow-xl flex flex-col gap-2 w-52 text-[9px] font-extrabold hover:scale-102 transition-all">
+          <div class="flex items-center gap-1.5 text-[#8C7355] border-b border-slate-100 pb-1">
+            <span class="material-icons-round text-xs">chat</span>
+            <span>Aide Interactive</span>
+          </div>
+          <div class="flex flex-col gap-1.5 leading-normal">
+            <div class="bg-slate-100 text-slate-800 p-1.5 rounded-lg rounded-tl-none self-start max-w-[90%]">
+              <span class="text-slate-400 font-bold uppercase block text-[7px] mb-0.5">Meryem</span>
+              Signification des EPI ?
+            </div>
+            <div class="bg-[#FAF6F0] text-[#5C4630] p-1.5 rounded-lg rounded-tr-none self-end max-w-[90%] border border-[#D4AF37]/20">
+              <span class="text-[#8C7355] font-bold uppercase block text-[7px] mb-0.5">Assistant</span>
+              Équipements de Protection Individuelle.
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget 3: Ask AI Action Badge -->
+        <div class="bg-[#EADCC9] border-2 border-[#8C7355]/40 text-[#5C4630] rounded-full px-4.5 py-2.5 flex items-center gap-2.5 shadow-md hover:bg-[#FAF6F0] transition-colors cursor-pointer select-none">
+          <span class="material-icons-round text-base text-[#8C7355]">psychology</span>
+          <div class="text-left font-display">
+            <div class="text-[9px] font-black uppercase tracking-wider">Demander à l'IA</div>
+            <div class="text-[8px] text-[#8C7355] font-extrabold">(Ask AI Assistant)</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Additional Floating Dots for Tech Layer (Corners) -->
+      <svg class="absolute top-[8%] left-[25%] w-[120px] h-[120px] text-[#8C7355]/30" viewBox="0 0 100 100">
+        <circle cx="10" cy="10" r="1.5" fill="currentColor" />
+        <circle cx="30" cy="10" r="1.5" fill="currentColor" />
+        <circle cx="50" cy="10" r="1.5" fill="currentColor" />
+        <circle cx="70" cy="10" r="1.5" fill="currentColor" />
+        <circle cx="90" cy="10" r="1.5" fill="currentColor" />
+        <circle cx="20" cy="30" r="1.5" fill="currentColor" />
+        <circle cx="40" cy="30" r="1.5" fill="currentColor" />
+        <circle cx="60" cy="30" r="1.5" fill="currentColor" />
+        <circle cx="80" cy="30" r="1.5" fill="currentColor" />
+      </svg>
+    </div>
+
+    <!-- Navbar (conditional) -->
+    @if (showNavbar()) {
+      <header class="glass-panel sticky top-4 z-50 max-w-6xl mx-auto rounded-3xl shadow-lg border border-white/40 flex items-center justify-between px-6 py-4 mt-4 transition-all duration-300 w-[95%]">
+        <a routerLink="/roadmap" class="flex items-center gap-3 cursor-pointer select-none">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary-blue to-primary-blue-dark flex items-center justify-center shadow-md border-2 border-white">
+            <span class="text-white font-extrabold text-lg">W</span>
+          </div>
+          <span class="text-slate-800 font-extrabold text-xl tracking-tight font-display">WelcomeWise</span>
+        </a>
+        
+        <nav class="flex items-center gap-6">
+          <a routerLink="/roadmap" [class.text-primary-blue]="currentUrl() === '/roadmap'" [class.font-semibold]="currentUrl() === '/roadmap'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">map</span>
+            <span class="hidden sm:inline">Parcours</span>
+          </a>
+          <a routerLink="/lesson" [class.text-primary-blue]="currentUrl() === '/lesson'" [class.font-semibold]="currentUrl() === '/lesson'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">menu_book</span>
+            <span class="hidden sm:inline">Leçon</span>
+          </a>
+          <a routerLink="/quiz" [class.text-primary-blue]="currentUrl() === '/quiz'" [class.font-semibold]="currentUrl() === '/quiz'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">assignment</span>
+            <span class="hidden sm:inline">Quiz HSE</span>
+          </a>
+          <a routerLink="/chatbot" [class.text-primary-blue]="currentUrl() === '/chatbot'" [class.font-semibold]="currentUrl() === '/chatbot'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">chat_bubble</span>
+            <span class="hidden sm:inline">Chatbot IA</span>
+          </a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+          <div class="bg-amber-50 border border-amber-200 rounded-full px-3.5 py-1 flex items-center gap-1">
+            <span class="material-icons-round text-amber-500 text-sm">stars</span>
+            <span class="text-amber-800 font-extrabold text-xs tracking-tight">{{ points() }} Pts</span>
+          </div>
+
+          <a routerLink="/profile" class="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100/60" title="Paramètres de profil">
+            <span class="material-icons-round text-xl">settings</span>
+          </a>
+
+          <a routerLink="/profile" class="flex items-center gap-3 cursor-pointer group">
+            <div class="text-right hidden md:block">
+              <div class="text-slate-800 font-bold text-xs group-hover:text-primary-blue transition-colors">Meryem FATHI</div>
+              <div class="text-slate-400 text-[10px] font-semibold">Département HSE</div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-white group-hover:border-primary-blue shadow-md transition-colors">
+          </a>
+
+          <button (click)="logoutEmployee()" class="text-slate-400 hover:text-red-500 transition-colors cursor-pointer flex items-center justify-center w-8 h-8 rounded-full hover:bg-red-50" title="Déconnexion">
+            <span class="material-icons-round text-lg">logout</span>
+          </button>
+        </div>
+      </header>
+    }
+
+    <!-- Routed Component -->
+    <main class="w-full flex-grow relative z-10">
+      <router-outlet></router-outlet>
+    </main>
+
+    @if (showNavbar()) {
+      <footer class="text-center py-6 text-slate-500 font-semibold text-[10px] opacity-75 uppercase tracking-wider">
+        Ménara Holding © 2026 • WelcomeWise Integration Web App
+      </footer>
+    }
+  </div>
+</ng-container>
+
+<!-- ========================================== -->
+<!-- 💼 ESPACE ADMINISTRATION                   -->
+<!-- ========================================== -->
+<ng-container *ngIf="systemRole() === 'admin'">
+  <div [class]="adminState() === 'login' ? 'min-h-screen bg-gradient-to-br from-[#EAE3D2] via-[#F5ECE3] to-[#DFD0C0] relative flex flex-col items-center justify-center p-4 overflow-hidden' : 'min-h-screen bg-[#FAF8F5] relative flex flex-col overflow-hidden'">
+    
+    @if (adminState() === 'login') {
+      <!-- BACKGROUND NETWORK SYSTEM -->
+      <div class="absolute inset-0 z-0 pointer-events-none opacity-25">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-admin" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#D4AF37" stroke-width="0.3" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-admin)" />
+          
+          <path d="M 150,150 L 250,80 L 350,180 L 200,350 L 100,280 Z" fill="none" stroke="#0F172A" stroke-width="1" stroke-dasharray="3,3" />
+          <path d="M 900,200 L 1100,150 L 1200,320 L 1050,480 L 950,380 Z" fill="none" stroke="#D4AF37" stroke-width="1.2" stroke-dasharray="5,5" />
+          <circle cx="250" cy="80" r="5" fill="#D4AF37" class="animate-pulse" />
+          <circle cx="350" cy="180" r="7" fill="#0F172A" />
+          <circle cx="1200" cy="320" r="8" fill="#D4AF37" />
+        </svg>
+      </div>
+
+      <!-- ADMIN LOGIN SCREEN -->
+      <div class="flex-grow flex flex-col items-center justify-center py-10 z-10 px-4 relative w-full">
+        <div class="w-full max-w-lg mb-4 text-center">
+          <!-- Header Banner -->
+          <div class="bg-[#F4EFEB]/95 backdrop-blur-md rounded-2xl py-3.5 px-8 shadow-md border border-[#D4AF37]/40 flex items-center justify-center space-x-4 mx-auto max-w-[420px]">
+            <h1 class="text-[#0F172A] text-xl md:text-2xl font-black tracking-wide leading-none">Portail RH & Administration</h1>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4AF37] to-amber-300 flex items-center justify-center shadow-sm">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Subtitle -->
+          <div class="mt-4">
+            <h2 class="text-4xl font-extrabold text-[#0F172A] tracking-wider font-display">WelcomeWise</h2>
+            <div class="flex items-center justify-center space-x-1.5 mt-1">
+              <div class="bg-gradient-to-tr from-[#D4AF37] to-amber-200 text-[#0F172A] p-0.5 rounded-full">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M2.166 4.9L10 1.554l7.834 3.346a1.2 1.2 0 0 1 .816 1.13v3.42a12.02 12.02 0 0 1-7.816 11.233.15.15 0 0 1-.134 0l-7.834-3.346A1.2 1.2 0 0 1 2 15.934v-3.42a12.02 12.02 0 0 1 7.816-11.233.15.15 0 0 1 .134 0z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span class="text-xs font-bold text-[#8C7355] tracking-wider uppercase">Ménara Holding</span>
+            </div>
+            <span class="text-[10px] text-slate-500 block font-bold mt-1 font-serif">Ménara Onboarding Platform</span>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-[3px] border-[#D4AF37] relative transition-transform duration-300 hover:scale-[1.01]">
+          
+          <div class="absolute top-4 left-4 flex flex-col items-center">
+            <span class="p-1.5 bg-[#F5ECE3] rounded-full text-[#D4AF37] border border-[#D4AF37]/30 shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </span>
+            <span class="text-[9px] font-black text-[#8C7355] mt-1">Accès Sécurisé</span>
+          </div>
+
+          <div class="absolute top-4 right-4 text-[#D4AF37]">
+            <svg class="w-6 h-6 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m-2-2a2 2 0 00-2 2m2-2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2m2 2h2M9 15.586V17h1.586A1 1 0 0111 18v1.586a1 1 0 01-.293.707l-1 1A1 1 0 019 21H7a1 1 0 01-1-1v-2a1 1 0 01.293-.707l1-1A1 1 0 018 16v-1.586a1 1 0 01.293-.707l1.5-1.5z" />
+            </svg>
+          </div>
+
+          <div class="text-center mt-14 mb-6">
+            <h3 class="text-xl font-black text-[#0F172A] font-display">Connexion Administration</h3>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-left text-xs font-black text-[#8C7355] mb-1">E-mail Professionnel</label>
+              <div class="relative">
+                <input type="email" placeholder="Professional Email" [(ngModel)]="adminEmail"
+                       class="w-full text-left pl-3 pr-10 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition font-semibold">
+                <span class="absolute right-3 top-3.5 text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-left text-xs font-black text-[#8C7355] mb-1">Mot de Passe</label>
+              <div class="relative">
+                <input [type]="showAdminPassword() ? 'text' : 'password'" placeholder="Password" [(ngModel)]="adminPassword"
+                       class="w-full text-left pl-10 pr-10 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition font-semibold">
+                <span (click)="toggleAdminPassword()" class="absolute left-3 top-3.5 text-slate-400 cursor-pointer hover:text-[#0F172A] transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="!showAdminPassword()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path *ngIf="!showAdminPassword()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    <path *ngIf="showAdminPassword()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88L3 3m12 12l6 6"/>
+                  </svg>
+                </span>
+                <span class="absolute right-3 top-3.5 text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs font-bold pt-1">
+              <a href="javascript:void(0)" class="text-[#1E3A8A] hover:underline">Mot de passe oublié ?</a>
+              <label class="flex items-center space-x-1.5 cursor-pointer select-none">
+                <input type="checkbox" [(ngModel)]="adminRememberMe" class="rounded border-slate-300 text-[#D4AF37]">
+                <span class="text-slate-600">Se souvenir de moi</span>
+              </label>
+            </div>
+
+            <button (click)="handleAdminLogin()" 
+                    class="w-full py-3 mt-4 rounded-xl bg-[#1E3A8A] hover:bg-[#0F172A] text-[#F5EFE6] font-black tracking-wide text-sm shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer">
+              <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m-2-2a2 2 0 00-2 2m2-2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2m2 2h2M9 15.586V17h1.586A1 1 0 0111 18v1.586a1 1 0 01-.293.707l-1 1A1 1 0 019 21H7a1 1 0 01-1-1v-2a1 1 0 01.293-.707l1-1A1 1 0 018 16v-1.586a1 1 0 01.293-.707l1.5-1.5z" />
+              </svg>
+              <span>Connexion</span>
+            </button>
+          </div>
+
+          <div class="text-center text-[10px] text-slate-400 font-extrabold mt-4 pt-3 border-t border-slate-100">
+            Sécurisé par Bcrypt & Chiffrement Avancé
+          </div>
+        </div>
+
+        <!-- Bottom Footer elements -->
+        <div class="w-full max-w-4xl flex flex-col md:flex-row items-center justify-between mt-12 text-[10px] text-[#8C7355] font-black border-t border-slate-300/40 pt-4 px-2">
+          <div class="flex items-center space-x-2 relative mb-3 md:mb-0 text-slate-500">
+            <select class="bg-white/90 border border-[#D4AF37]/50 rounded-lg py-1.5 px-3 text-[10px] font-black focus:outline-none cursor-pointer">
+              <option value="fr">Français (French)</option>
+              <option value="ar">العربية (Arabic)</option>
+              <option value="en">English (English)</option>
+            </select>
+            <span class="text-[10px] text-slate-400 font-extrabold">Langue :</span>
+          </div>
+          <div class="mb-3 md:mb-0 text-slate-500 font-extrabold">Ménara Holding © 2026</div>
+          <div class="flex items-center space-x-3 mt-3 md:mt-0 text-slate-500">
+            <div class="flex items-center space-x-1 text-[#8C7355]">
+              <span>Connexion cryptée & sécurisée</span>
+              <svg class="w-3 h-3 text-[#8C7355]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <span class="text-slate-300">|</span>
+            <div class="flex items-center space-x-1.5 text-slate-500">
+              <span>HR System Powered by Spring Security & AI</span>
+              <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- SUCCESS ACCESS STATE - PREMIUM DASHBOARD -->
+    <div *ngIf="adminState() === 'dashboard'" class="flex-grow flex flex-row w-full min-h-screen animate-fade-in relative z-10">
+      
+      <!-- 1. SIDEBAR DE GAUCHE -->
+      <aside class="w-72 bg-white border-r border-[#D4AF37]/20 flex flex-col justify-between p-6 shadow-xl relative z-20 flex-shrink-0">
+        
+        <div class="flex flex-col gap-8">
+          <!-- Logo Header -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#D4AF37] to-amber-300 flex items-center justify-center shadow-md">
+              <!-- Custom ChatGPT / IA Icon -->
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.5a6.5 6.5 0 100-13 6.5 6.5 0 000 13z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.25v3M12 18.75v3M2.25 12h3M18.75 12h3" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 12m-2 0a2 2 0 104 0 2 2 0 10-4 0" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-lg font-black text-[#0F172A] tracking-tight leading-none font-display">WelcomeWise</h2>
+              <span class="text-[10px] text-[#8C7355] font-black tracking-widest uppercase block mt-0.5">Admin / RH</span>
+            </div>
+          </div>
+
+          <!-- Navigation Menu (French only as requested) -->
+          <nav class="flex flex-col gap-1.5">
+            <button 
+              (click)="activeAdminTab.set('dashboard')" 
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'dashboard'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'dashboard'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'dashboard'"
+              [class.text-slate-600]="activeAdminTab() !== 'dashboard'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">dashboard</span>
+                <span>Tableau de Bord</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'dashboard'"></span>
+            </button>
+
+            <button 
+              (click)="activeAdminTab.set('employees')" 
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'employees'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'employees'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'employees'"
+              [class.text-slate-600]="activeAdminTab() !== 'employees'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">people</span>
+                <span>Gestion des Employés</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'employees'"></span>
+            </button>
+
+            <button 
+              (click)="activeAdminTab.set('builder')" 
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'builder'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'builder'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'builder'"
+              [class.text-slate-600]="activeAdminTab() !== 'builder'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">route</span>
+                <span>Parcours Builder</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'builder'"></span>
+            </button>
+
+            <button 
+              (click)="activeAdminTab.set('quiz')" 
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'quiz'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'quiz'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'quiz'"
+              [class.text-slate-600]="activeAdminTab() !== 'quiz'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">psychology</span>
+                <span>Contrôle Quiz IA</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'quiz'"></span>
+            </button>
+
+            <button 
+              (click)="activeAdminTab.set('reports')" 
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'reports'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'reports'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'reports'"
+              [class.text-slate-600]="activeAdminTab() !== 'reports'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">analytics</span>
+                <span>Rapports & Analyses</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'reports'"></span>
+            </button>
+
+            <button 
+              (click)="activeAdminTab.set('settings')" 
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'settings'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'settings'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'settings'"
+              [class.text-slate-600]="activeAdminTab() !== 'settings'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">settings</span>
+                <span>Paramètres</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'settings'"></span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Sidebar Bottom Footer Area (Connected nodes background + User Info + Logout) -->
+        <div class="relative mt-auto pt-6 border-t border-slate-100 flex flex-col gap-4">
+          <!-- Connect Network Mini Graphic inside sidebar -->
+          <div class="absolute bottom-16 left-0 right-0 h-28 pointer-events-none opacity-20 z-0">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="80" r="3" fill="#D4AF37" />
+              <circle cx="50" cy="40" r="4" fill="#0F172A" />
+              <circle cx="80" cy="70" r="3" fill="#D4AF37" />
+              <circle cx="30" cy="20" r="3" fill="#D4AF37" />
+              <line x1="20" y1="80" x2="50" y2="40" stroke="#D4AF37" stroke-width="0.5" stroke-dasharray="2,2" />
+              <line x1="50" y1="40" x2="80" y2="70" stroke="#D4AF37" stroke-width="0.5" />
+              <line x1="30" y1="20" x2="50" y2="40" stroke="#0F172A" stroke-width="0.5" />
+            </svg>
+          </div>
+
+          <div class="flex items-center gap-3 relative z-10">
+            <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-[#D4AF37] font-black text-xs">
+              AD
+            </div>
+            <div class="flex-grow">
+              <div class="text-[11px] font-black text-[#0F172A] leading-tight">Admin Ménara</div>
+              <div class="text-[9px] text-[#8C7355] font-black uppercase tracking-wider">Direction RH</div>
+            </div>
+          </div>
+
+          <button 
+            (click)="logoutAdmin()" 
+            class="w-full py-2.5 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer relative z-10 flex items-center justify-center gap-2"
+          >
+            <span class="material-icons-round text-sm">logout</span>
+            <span>DÉCONNEXION</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- 2. CONTENU PRINCIPAL (DÉFILANT) -->
+      <main class="flex-grow p-8 overflow-y-auto bg-[#FAF8F5] space-y-8 flex flex-col justify-between">
+        
+        <!-- Header row -->
+        <div class="flex items-center justify-between border-b border-slate-200/60 pb-5">
+          <div>
+            <h2 class="text-3xl font-black text-[#0F172A] tracking-tight font-display">{{ activeTabInfo().title }}</h2>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">{{ activeTabInfo().subtitle }}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="p-2 bg-white border border-[#D4AF37]/30 rounded-2xl text-[#8C7355] text-xs font-black shadow-sm flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Serveur Actif
+            </span>
+          </div>
+        </div>
+
+        @if (activeAdminTab() === 'dashboard') {
+
+<!-- row 1: Stats Cards (4 horizontally aligned) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <!-- Card 1: New Employees -->
+          <div class="bg-white border border-[#D4AF37]/15 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Nouveaux Employés</span>
+              <span class="p-2 bg-amber-50 rounded-2xl text-[#D4AF37] material-icons-round text-lg">person_add</span>
+            </div>
+            <div class="mt-4">
+              <div class="text-4xl font-black text-[#0F172A]">45</div>
+              <span class="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1 mt-1">
+                <span class="material-icons-round text-xs">arrow_upward</span>
+                +12% ce mois-ci
+              </span>
+            </div>
+          </div>
+
+          <!-- Card 2: Completion Rate -->
+          <div class="bg-white border border-[#D4AF37]/15 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Taux d'Étape 2</span>
+              <span class="p-2 bg-[#F5ECE3] rounded-2xl text-[#8C7355] material-icons-round text-lg">donut_large</span>
+            </div>
+            <div class="mt-3 flex items-center justify-between gap-2">
+              <div>
+                <div class="text-4xl font-black text-[#0F172A]">68%</div>
+                <span class="text-[10px] text-slate-400 font-bold block mt-1">Moyenne générale</span>
+              </div>
+              <!-- Radial Mini SVG -->
+              <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+                <path class="text-slate-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="text-[#D4AF37]" stroke-dasharray="68, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Card 3: Quiz Completed -->
+          <div class="bg-white border border-[#D4AF37]/15 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Quiz Terminés</span>
+              <span class="p-2 bg-indigo-50 rounded-2xl text-indigo-500 material-icons-round text-lg">checklist</span>
+            </div>
+            <div class="mt-4">
+              <div class="text-4xl font-black text-[#0F172A]">112</div>
+              <span class="text-[10px] text-slate-400 font-bold block mt-1">Sur 150 collaborateurs</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Alertes -->
+          <div class="bg-white border-2 border-red-500/80 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-red-600 uppercase tracking-wider">Alertes Actives</span>
+              <span class="p-1 bg-red-100 rounded-full text-red-500 material-icons-round text-sm animate-pulse">error_outline</span>
+            </div>
+            <div class="mt-3">
+              <div class="text-4xl font-black text-red-600">3</div>
+              <span class="text-[10px] text-red-700 font-extrabold flex items-center gap-1 mt-1 bg-red-50 px-2 py-0.5 rounded-lg border border-red-100 w-fit">
+                Bloqué : Moussa - Module 2
+              </span>
+            </div>
+          </div>
+        </div>
+
+        
+
+        <!-- row 2: Management Table -->
+        <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15 space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-lg font-black text-[#0F172A] font-display">Gestion des Employés</h3>
+              <p class="text-xs text-slate-400 font-bold">Suivi en temps réel de la progression des nouveaux arrivants</p>
+            </div>
+            <!-- Search bar -->
+            <div class="relative w-full sm:w-72">
+              <input 
+                type="text" 
+                placeholder="Rechercher un employé..." 
+                [ngModel]="adminSearchQuery()"
+                (ngModelChange)="adminSearchQuery.set($event)"
+                class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-full py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition font-semibold"
+              />
+              <span class="material-icons-round text-slate-400 text-sm absolute right-4 top-3.5">search</span>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-400 text-[10px] uppercase font-black tracking-wider pb-3">
+                  <th class="py-3 px-4">Collaborateur</th>
+                  <th class="py-3 px-4">Département</th>
+                  <th class="py-3 px-4">Statut</th>
+                  <th class="py-3 px-4">Progression</th>
+                  <th class="py-3 px-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-xs">
+                
+                @for (emp of filteredEmployees(); track $index) {
+                  <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="py-4 px-4 flex items-center gap-3">
+                        <img [src]="emp.avatar" alt="avatar" class="w-8 h-8 rounded-full border border-[#D4AF37]/30 shadow-sm" />
+                        <div>
+                          <span class="font-extrabold text-[#0F172A] block leading-tight">{{ emp.name }}</span>
+                          <span class="text-[9px] text-[#8C7355] font-black block mt-0.5 uppercase tracking-wide">{{ emp.role || 'Collaborateur' }}</span>
+                        </div>
+                      </td>
+                    <td class="py-4 px-4 font-bold text-slate-600">
+                      {{ emp.department }}
+                    </td>
+                    <td class="py-4 px-4">
+                      @if (emp.status === 'Succès') {
+                        <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                          Succès
+                        </span>
+                      } @else {
+                        <span class="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                          Suspendu
+                        </span>
+                      }
+                    </td>
+                    <td class="py-4 px-4">
+                      <div class="flex items-center gap-3">
+                        <span class="font-bold text-[#0F172A] w-7">{{ emp.progress }}%</span>
+                        <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                          <div 
+                            [style.width.%]="emp.progress" 
+                            [class.bg-emerald-500]="emp.status === 'Succès'"
+                            [class.bg-amber-500]="emp.status !== 'Succès'"
+                            class="h-full rounded-full transition-all duration-500"
+                          ></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-4 px-4">
+                      <div class="flex items-center justify-center gap-2">
+                        <button (click)="selectedEmployeeForTrack.set(emp)" class="px-3 py-1.5 rounded-full bg-[#0F172A] text-white hover:bg-[#D4AF37] hover:text-[#0F172A] transition font-black text-[10px] cursor-pointer">
+                          Suivre le parcours
+                        </button>
+                        <button (click)="openEditEmployeeModal(emp)" class="px-3 py-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100 transition font-black text-[10px] cursor-pointer">
+                            Modifier
+                          </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="py-8 text-center font-bold text-slate-400">
+                      Aucun collaborateur trouvé pour cette recherche.
+                    </td>
+                  </tr>
+                }
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        
+        <!-- 3. SECTION SUIVI INDIVIDUEL (INLINE) -->
+        <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15 space-y-6">
+          <div>
+            <h3 class="text-lg font-black text-[#0F172A] font-display">Suivi Individuel & Analyses</h3>
+            <p class="text-xs text-slate-400 font-bold">Sélectionnez un collaborateur dans la table ci-dessus pour suivre son parcours</p>
+          </div>
+          
+          @if (activeEmployeeForTrack()) {
+            <!-- Modal Content: Two-column layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              <!-- Left Column: Individual Tracking Details Card (taking 5 cols) -->
+              <div class="lg:col-span-5 bg-[#FAF6F0] border-2 border-[#D4AF37]/50 rounded-3xl p-5 relative shadow-sm flex flex-col justify-between">
+                
+                <div>
+                  <div class="flex items-center gap-3 border-b border-[#D4AF37]/20 pb-3 mb-4">
+                    <img [src]="activeEmployeeForTrack().avatar" alt="avatar" class="w-10 h-10 rounded-full border border-[#D4AF37] shadow-sm flex-shrink-0" />
+                    <div>
+                      <h3 class="text-sm font-black text-[#0F172A] tracking-tight font-display">Suivi Individuel</h3>
+                      <span class="text-[8px] font-bold text-slate-400 block tracking-wider uppercase mt-0.5">INDIVIDUAL TRACKING DETAILS</span>
+                    </div>
+                  </div>
+
+                  <!-- Info Fields -->
+                  <div class="space-y-3.5 text-xs">
+                    
+                    <!-- Date de début -->
+                    <div class="flex items-center justify-between border-b border-dashed border-[#D4AF37]/20 pb-2">
+                      <span class="font-bold text-slate-500 text-[10px]">Date de Début :</span>
+                      <span class="font-extrabold text-[#0F172A]">01/03/2026</span>
+                    </div>
+
+                    <!-- Résultats des Tests -->
+                    <div>
+                      <span class="font-bold text-slate-500 block mb-2 text-[10px]">Résultats des Tests :</span>
+                      <div class="space-y-2 bg-white/70 rounded-2xl p-3 border border-[#D4AF37]/10 shadow-inner">
+                        
+                        <!-- Culture d'entreprise -->
+                        <div class="space-y-0.5">
+                          <div class="flex justify-between font-bold text-[9px]">
+                            <span class="text-slate-600">Culture d'entreprise</span>
+                            <span class="text-[#0F172A]">90%</span>
+                          </div>
+                          <div class="w-full bg-slate-100 rounded-full h-1">
+                            <div class="bg-[#D4AF37] h-full rounded-full" style="width: 90%"></div>
+                          </div>
+                        </div>
+
+                        <!-- Sécurité -->
+                        <div class="space-y-0.5">
+                          <div class="flex justify-between font-bold text-[9px]">
+                            <span class="text-slate-600">Sécurité</span>
+                            <span class="text-[#0F172A]">10%</span>
+                          </div>
+                          <div class="w-full bg-slate-100 rounded-full h-1">
+                            <div class="bg-red-500 h-full rounded-full" style="width: 10%"></div>
+                          </div>
+                        </div>
+
+                        <!-- Métier -->
+                        <div class="space-y-0.5">
+                          <div class="flex justify-between font-bold text-[9px]">
+                            <span class="text-slate-600">Métier</span>
+                            <span class="text-[#0F172A]">75%</span>
+                          </div>
+                          <div class="w-full bg-slate-100 rounded-full h-1">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 75%"></div>
+                          </div>
+                        </div>
+                        
+                        <!-- Generated by ChatGPT -->
+                        <div class="text-[7px] text-slate-400 font-bold italic text-right mt-1">
+                          Generated by ChatGPT
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Documents téléchargés -->
+                    <div class="space-y-1.5">
+                      <span class="font-bold text-slate-500 block text-[10px]">Documents Téléchargés :</span>
+                      <div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl p-2 shadow-sm">
+                        <div class="flex items-center gap-1.5">
+                          <span class="material-icons-round text-red-500 text-base">description</span>
+                          <span class="font-bold text-[10px] text-[#0F172A]">Guide de l'employé</span>
+                        </div>
+                        <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md">Oui</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-[#D4AF37]/20">
+                  <button (click)="showToast('Téléchargement du rapport complet de ' + activeEmployeeForTrack().name)" class="w-full py-2 bg-[#0F172A] hover:bg-[#D4AF37] hover:text-[#0F172A] text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                    <span class="material-icons-round text-sm">download</span>
+                    <span>Télécharger Rapport</span>
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- Right Column: Quiz Questions list (taking 7 cols) -->
+              <div class="lg:col-span-7 flex flex-col justify-between">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="text-xs font-black text-[#8C7355] uppercase tracking-wider font-display">Flux des Réponses au Quiz</h4>
+                      <p class="text-[9px] text-slate-400 font-bold mt-0.5">Détails des questions posées et réponses données par l'employé</p>
+                    </div>
+                  </div>
+
+                  <!-- Scrollable list of questions -->
+                  <div class="space-y-2.5 max-h-[280px] overflow-y-auto pr-1">
+                    
+                    <!-- Question 1 -->
+                    <div class="bg-slate-50 hover:bg-slate-100/60 border border-slate-100 hover:border-[#D4AF37]/35 rounded-2xl p-3.5 transition-all flex flex-col justify-between gap-2 shadow-sm">
+                      <div class="flex justify-between items-start gap-2">
+                        <div class="text-[10px] font-extrabold text-[#0F172A] leading-normal">
+                          1. Règlement général de sécurité incendie au sein du groupe ?
+                        </div>
+                        <span class="text-[8px] font-black text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100 flex-shrink-0">0/5 Pts</span>
+                      </div>
+                      <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 pt-1 border-t border-slate-100/50">
+                        <span>Réponse : <strong class="text-red-600">Rollis</strong> (Incorrect)</span>
+                        <div class="flex gap-2">
+                          <button (click)="showToast('Revoir la question 1')" class="text-[#8C7355] hover:text-[#D4AF37] hover:underline cursor-pointer">Revoir</button>
+                          <button (click)="showToast('Modifier le score de la question 1')" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">Modifier</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="bg-slate-50 hover:bg-slate-100/60 border border-slate-100 hover:border-[#D4AF37]/35 rounded-2xl p-3.5 transition-all flex flex-col justify-between gap-2 shadow-sm">
+                      <div class="flex justify-between items-start gap-2">
+                        <div class="text-[10px] font-extrabold text-[#0F172A] leading-normal">
+                          2. Utilisation obligatoire des EPI dans les carrières ?
+                        </div>
+                        <span class="text-[8px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 flex-shrink-0">5/5 Pts</span>
+                      </div>
+                      <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 pt-1 border-t border-slate-100/50">
+                        <span>Réponse : <strong class="text-emerald-600">Roke</strong> (Correct)</span>
+                        <div class="flex gap-2">
+                          <button (click)="showToast('Revoir la question 2')" class="text-[#8C7355] hover:text-[#D4AF37] hover:underline cursor-pointer">Revoir</button>
+                          <button (click)="showToast('Modifier le score de la question 2')" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">Modifier</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="bg-slate-50 hover:bg-slate-100/60 border border-slate-100 hover:border-[#D4AF37]/35 rounded-2xl p-3.5 transition-all flex flex-col justify-between gap-2 shadow-sm">
+                      <div class="flex justify-between items-start gap-2">
+                        <div class="text-[10px] font-extrabold text-[#0F172A] leading-normal">
+                          3. Protocole de sécurité lors des visites d'usines ?
+                        </div>
+                        <span class="text-[8px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 flex-shrink-0">5/5 Pts</span>
+                      </div>
+                      <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 pt-1 border-t border-slate-100/50">
+                        <span>Réponse : <strong class="text-emerald-600">Alinuul</strong> (Correct)</span>
+                        <div class="flex gap-2">
+                          <button (click)="showToast('Revoir la question 3')" class="text-[#8C7355] hover:text-[#D4AF37] hover:underline cursor-pointer">Revoir</button>
+                          <button (click)="showToast('Modifier le score de la question 3')" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">Modifier</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div> <!-- Close right column lg:col-span-7 -->
+            </div><!-- end of grid layout -->
+          }
+        </div>
+
+}
+@if (activeAdminTab() === 'employees') {
+        <!-- row 2: Management Table -->
+        <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15 space-y-6 relative">
+          
+          <!-- Top Row: Add button, Search, Filters -->
+          <div class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            
+            <!-- Left: Add Employee Button -->
+            <button 
+              (click)="showAddEmployeeModal.set(true)" 
+              class="py-2.5 px-5 bg-[#1E3A8A] hover:bg-[#0F172A] text-white rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            >
+              <span class="material-icons-round text-sm">person_add</span>
+              <span>Ajouter un Collaborateur</span>
+            </button>
+
+            <!-- Right: Search + Filters -->
+            <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 flex-grow xl:justify-end">
+              
+              <!-- Search bar -->
+              <div class="relative flex-grow max-w-md">
+                <input 
+                  type="text" 
+                  placeholder="Rechercher un employé..." 
+                  [ngModel]="adminSearchQuery()"
+                  (ngModelChange)="adminSearchQuery.set($event)"
+                  class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition font-semibold"
+                />
+                <span class="material-icons-round text-slate-400 text-sm absolute right-4 top-3.5">search</span>
+              </div>
+
+              <!-- Filter Department -->
+              <div class="relative min-w-[140px]">
+                <select 
+                  [ngModel]="adminSelectedDepartmentFilter()" 
+                  (ngModelChange)="adminSelectedDepartmentFilter.set($event)"
+                  class="w-full bg-white border border-slate-200 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] transition cursor-pointer"
+                >
+                  <option value="Tous">Tous Départements</option>
+                  <option value="Finance">Finance</option>
+                  <option value="SI">SI (Informatique)</option>
+                  <option value="BTP">BTP (Construction)</option>
+                </select>
+              </div>
+
+              <!-- Filter Status -->
+              <div class="relative min-w-[140px]">
+                <select 
+                  [ngModel]="adminSelectedStatusFilter()" 
+                  (ngModelChange)="adminSelectedStatusFilter.set($event)"
+                  class="w-full bg-white border border-slate-200 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] transition cursor-pointer"
+                >
+                  <option value="Tous">Tous Statuts</option>
+                  <option value="Succès">Succès</option>
+                  <option value="Suspendu">Suspendu</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-400 text-[10px] uppercase font-black tracking-wider pb-3">
+                  <th class="py-3 px-4">Photo</th>
+                  <th class="py-3 px-4">Nom (Name)</th>
+                  <th class="py-3 px-4">Adresse E-mail</th>
+                  <th class="py-3 px-4">Département</th>
+                  <th class="py-3 px-4">Statut</th>
+                  <th class="py-3 px-4">Progression</th>
+                  <th class="py-3 px-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-xs">
+                
+                @for (emp of filteredEmployees(); track $index) {
+                  <tr class="hover:bg-slate-50/50 transition-colors">
+                    <!-- Photo -->
+                    <td class="py-4 px-4">
+                      <img [src]="emp.avatar" alt="avatar" class="w-10 h-10 rounded-full border-2 border-[#D4AF37]/35 shadow-sm object-cover" />
+                    </td>
+
+                    <!-- Nom -->
+                    <td class="py-4 px-4">
+                      <span class="font-extrabold text-[#0F172A] block leading-tight">{{ emp.name }}</span>
+                      <span class="text-[9px] text-[#8C7355] font-black block mt-0.5 uppercase tracking-wide">{{ emp.role || 'Collaborateur' }}</span>
+                    </td>
+
+                    <!-- E-mail -->
+                    <td class="py-4 px-4 font-semibold text-slate-600">
+                      {{ emp.email }}
+                    </td>
+
+                    <!-- Département -->
+                    <td class="py-4 px-4 font-bold text-slate-600">
+                      {{ emp.department }}
+                    </td>
+
+                    <!-- Statut -->
+                    <td class="py-4 px-4">
+                      @if (emp.status === 'Succès') {
+                        <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                          Succès
+                        </span>
+                      } @else {
+                        <span class="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                          Suspendu
+                        </span>
+                      }
+                    </td>
+
+                    <!-- Progression -->
+                    <td class="py-4 px-4">
+                      <div class="flex flex-col gap-1 w-32">
+                        <div class="flex items-center justify-between text-[10px] font-black text-[#0F172A]">
+                          <span>{{ emp.progress }}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                          <div 
+                            [style.width.%]="emp.progress" 
+                            [class.bg-emerald-500]="emp.status === 'Succès'"
+                            [class.bg-amber-500]="emp.status !== 'Succès'"
+                            class="h-full rounded-full transition-all duration-500"
+                          ></div>
+                        </div>
+                        <span class="text-[8px] text-slate-400 font-bold block mt-0.5">{{ emp.modules || '0/20 modules' }}</span>
+                      </div>
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="py-4 px-4">
+                      <div class="flex items-center justify-center gap-4">
+                        
+                        <!-- Action: Modifier -->
+                        <button 
+                          (click)="openEditEmployeeModal(emp)" 
+                          class="flex flex-col items-center gap-0.5 text-slate-500 hover:text-[#0F172A] transition-colors cursor-pointer bg-transparent border-0"
+                        >
+                          <span class="material-icons-round text-base">edit</span>
+                          <span class="text-[8px] font-black uppercase">Modifier</span>
+                        </button>
+
+                        <!-- Action: Suivre -->
+                        <button 
+                          (click)="selectedEmployeeForTrack.set(emp)" 
+                          class="flex flex-col items-center gap-0.5 text-[#8C7355] hover:text-[#D4AF37] transition-colors cursor-pointer bg-transparent border-0"
+                        >
+                          <span class="material-icons-round text-base">notifications_active</span>
+                          <span class="text-[8px] font-black uppercase">Suivre</span>
+                        </button>
+
+                        <!-- Action: Rapport -->
+                        <button 
+                          (click)="showToast('Téléchargement du rapport complet de ' + emp.name)" 
+                          class="flex flex-col items-center gap-0.5 text-[#1E3A8A] hover:text-[#0F172A] transition-colors cursor-pointer bg-transparent border-0"
+                        >
+                          <span class="material-icons-round text-base">download</span>
+                          <span class="text-[8px] font-black uppercase">Rapport</span>
+                        </button>
+
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="7" class="py-8 text-center font-bold text-slate-400">
+                      Aucun collaborateur trouvé pour cette recherche.
+                    </td>
+                  </tr>
+                }
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- FLOATING INDIVIDUAL TRACKING DETAILS (DRAWER PANEL) -->
+          @if (selectedEmployeeForTrack(); as activeEmp) {
+            <div class="fixed bottom-6 right-6 z-[100] max-w-sm w-full bg-white rounded-[32px] p-5 border-[3px] border-[#D4AF37] shadow-2xl animate-scale-up">
+              
+              <!-- Close button -->
+              <button 
+                (click)="selectedEmployeeForTrack.set(null)" 
+                class="absolute top-4 right-4 text-slate-400 hover:text-[#0f172a] transition cursor-pointer flex items-center justify-center w-7 h-7 rounded-full bg-slate-100"
+              >
+                <span class="material-icons-round text-sm">close</span>
+              </button>
+
+              <div class="flex items-center gap-3 border-b border-[#D4AF37]/20 pb-3 mb-4 pr-8">
+                <img [src]="activeEmp.avatar" alt="avatar" class="w-10 h-10 rounded-full border border-[#D4AF37] shadow-sm object-cover flex-shrink-0" />
+                <div>
+                  <h3 class="text-xs font-black text-[#0F172A] tracking-tight font-display">Suivi Individuel</h3>
+                  <span class="text-[8px] font-bold text-slate-400 block tracking-wider uppercase mt-0.5">Détails de Progression</span>
+                </div>
+              </div>
+
+              <!-- Content details -->
+              <div class="space-y-4 text-xs">
+                
+                <!-- Nom complet -->
+                <div class="flex items-center justify-between border-b border-dashed border-[#D4AF37]/20 pb-1.5">
+                  <span class="font-bold text-slate-500 text-[10px]">Nom :</span>
+                  <span class="font-extrabold text-[#0F172A]">{{ activeEmp.name }}</span>
+                </div>
+
+                <!-- Date de début -->
+                <div class="flex items-center justify-between border-b border-dashed border-[#D4AF37]/20 pb-1.5">
+                  <span class="font-bold text-slate-500 text-[10px]">Date de Début :</span>
+                  <span class="font-extrabold text-[#0F172A]">01/03/2026</span>
+                </div>
+
+                <!-- Résultats des Tests -->
+                <div>
+                  <span class="font-bold text-slate-500 block mb-2 text-[10px]">Résultats des Tests :</span>
+                  <div class="space-y-2 bg-[#FAF6F0] rounded-2xl p-3 border border-[#D4AF37]/10 shadow-inner">
+                    
+                    <!-- Culture d'entreprise -->
+                    <div class="space-y-0.5">
+                      <div class="flex justify-between font-bold text-[9px]">
+                        <span class="text-slate-600">Culture d'entreprise</span>
+                        <span class="text-[#0F172A]">90%</span>
+                      </div>
+                      <div class="w-full bg-slate-200 rounded-full h-1">
+                        <div class="bg-[#D4AF37] h-full rounded-full" style="width: 90%"></div>
+                      </div>
+                    </div>
+
+                    <!-- Sécurité -->
+                    <div class="space-y-0.5">
+                      <div class="flex justify-between font-bold text-[9px]">
+                        <span class="text-slate-600">Sécurité</span>
+                        <span class="text-[#0F172A]">10%</span>
+                      </div>
+                      <div class="w-full bg-slate-200 rounded-full h-1">
+                        <div class="bg-red-500 h-full rounded-full" style="width: 10%"></div>
+                      </div>
+                    </div>
+
+                    <!-- Métier -->
+                    <div class="space-y-0.5">
+                      <div class="flex justify-between font-bold text-[9px]">
+                        <span class="text-slate-600">Métier</span>
+                        <span class="text-[#0F172A]">75%</span>
+                      </div>
+                      <div class="w-full bg-slate-200 rounded-full h-1">
+                        <div class="bg-emerald-500 h-full rounded-full" style="width: 75%"></div>
+                      </div>
+                    </div>
+                    
+                    <div class="text-[7px] text-slate-400 font-bold italic text-right mt-1">
+                      Généré automatiquement
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Documents téléchargés -->
+                <div class="space-y-1.5">
+                  <span class="font-bold text-slate-500 block text-[10px]">Documents Téléchargés :</span>
+                  <div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl p-2 shadow-sm">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-icons-round text-red-500 text-sm">description</span>
+                      <span class="font-bold text-[9px] text-[#0F172A]">Guide de l'employé</span>
+                    </div>
+                    <span class="text-[8px] font-black text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md">Oui</span>
+                  </div>
+                </div>
+
+                <button 
+                  (click)="showToast('Téléchargement du rapport de ' + activeEmp.name)" 
+                  class="w-full mt-3 py-2 bg-[#0F172A] hover:bg-[#D4AF37] hover:text-[#0F172A] text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <span class="material-icons-round text-sm">download</span>
+                  <span>Télécharger Rapport</span>
+                </button>
+
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+
+        @if (activeAdminTab() === 'builder') {
+          <div class="space-y-6 animate-fade-in">
+            
+            <!-- 1. Visual Timeline Card -->
+            <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15">
+              <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Visual Timeline</span>
+                <div class="flex items-center gap-3">
+                  <button (click)="openAddModuleModal()" class="py-1 px-3 bg-[#FAF6F0] hover:bg-[#D4AF37]/20 border border-[#D4AF37]/35 text-[#8C7355] rounded-full text-xs font-black transition-all cursor-pointer flex items-center gap-1 shadow-sm">
+                    <span class="material-icons-round text-sm">add_circle</span>
+                    <span>Ajouter Module</span>
+                  </button>
+                  <!-- Module Search Input -->
+                  <div class="relative w-48">
+                    <span class="material-icons-round absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                    <input 
+                      type="text" 
+                      placeholder="Rechercher (ex: Module 6)..." 
+                      (input)="searchAndScrollModule($event)"
+                      class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-[10px] font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/10 transition-all placeholder-slate-400"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex flex-row overflow-x-auto gap-6 pt-4 pb-6 items-start relative scroll-smooth scrollbar-thin scrollbar-thumb-amber-300">
+                
+                @for (module of onboardingService.modules(); track module.id; let idx = $index) {
+                  <div 
+                    [class.border-[#D4AF37]/50]="module.status === 'completed'"
+                    [class.border-[#D4AF37]/80]="module.status === 'current'"
+                    [class.border-[#D4AF37]/20]="module.status === 'locked'"
+                    class="bg-white border-2 rounded-3xl p-5 shadow-sm relative hover:border-[#D4AF37]/60 transition-all w-[325px] shrink-0"
+                    id="admin-module-{{ module.id }}"
+                  >
+                    <!-- Bouton Supprimer le Module -->
+                    <button 
+                       (click)="deleteModule(module.id)" 
+                       class="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-600 border border-red-200 flex items-center justify-center transition-all cursor-pointer shadow-sm z-30"
+                       title="Supprimer ce module"
+                     >
+                       <span class="material-icons-round text-[10px] font-black">close</span>
+                     </button>
+
+                    <!-- Connector Arrow (Desktop) -->
+                    <div *ngIf="idx > 0" class="hidden lg:block absolute top-1/2 -left-4 transform -translate-y-1/2 z-10 text-[#D4AF37]">
+                      <span class="material-icons-round text-2xl bg-white rounded-full shadow-sm">arrow_forward</span>
+                    </div>
+
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#8C7355] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                      Module {{ module.id }}
+                    </div>
+                    
+                    <div class="text-center mt-3 mb-1">
+                      <h4 class="text-sm font-black text-[#0F172A]">{{ module.titleKey }}</h4>
+                      <p class="text-[9px] text-[#8C7355] font-bold mt-0.5">{{ module.subtitleKey }}</p>
+                    </div>
+
+                    <!-- Statut Employé Dropdown Selector -->
+                    <div class="flex items-center justify-between mb-3 bg-[#FAF6F0]/60 p-1.5 rounded-xl border border-[#D4AF37]/10">
+                      <span class="text-[8px] font-black text-slate-500 uppercase tracking-wider">Statut Employé</span>
+                      <select [value]="module.status" (change)="updateModuleStatus(module.id, $event)" class="text-[9px] font-bold text-[#8C7355] bg-white border border-[#D4AF37]/25 rounded-md px-1.5 py-0.5 outline-none cursor-pointer">
+                        <option value="completed">Complété</option>
+                        <option value="current">En Cours (Actif)</option>
+                        <option value="locked">Verrouillé</option>
+                      </select>
+                    </div>
+
+                    <!-- Interlocuteur Section -->
+                    <div class="mb-4 bg-[#FAF6F0]/40 border border-[#D4AF37]/15 rounded-2xl p-2.5 relative">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block text-left">Interlocuteurs Référents</span>
+                        
+                        <div class="relative">
+                          <button (click)="toggleInterlocutorDropdown(module.id)" class="px-2 py-0.5 bg-white hover:bg-slate-50 border border-slate-200 text-[#8C7355] rounded-lg text-[8px] font-bold transition cursor-pointer flex items-center gap-0.5 shadow-sm">
+                            <span class="material-icons-round text-[10px]">add</span>
+                            <span>Associer</span>
+                          </button>
+                          
+                          <!-- Dropdown Panel -->
+                          <div *ngIf="activeInterlocutorDropdown() === module.id" class="absolute right-0 mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1 text-left animate-fade-in max-h-40 overflow-y-auto scrollbar-thin">
+                            <button (click)="addModuleInterlocutor(module.id, 'none')" class="w-full px-3 py-1.5 hover:bg-slate-50 text-[9px] font-bold text-slate-500 flex items-center gap-1.5 cursor-pointer border-0 bg-transparent text-left">
+                              <span class="material-icons-round text-xs">person_off</span>
+                              <span>Retirer tous</span>
+                            </button>
+                            @for (person of interlocutors; track person.name) {
+                              <button (click)="addModuleInterlocutor(module.id, person.name)" class="w-full px-3 py-1.5 hover:bg-[#FAF6F0] text-[9px] font-bold text-slate-700 flex items-center gap-2 cursor-pointer border-0 bg-transparent text-left">
+                                <img [src]="person.avatarUrl" class="w-4 h-4 rounded-full object-cover border" />
+                                <span>{{ person.name }}</span>
+                              </button>
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="space-y-1.5">
+                        @if (module.interlocutorsList && module.interlocutorsList.length > 0) {
+                          @for (interlocutor of module.interlocutorsList; track interlocutor.name) {
+                            <div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl p-1.5 shadow-sm">
+                              <div class="flex items-center gap-2">
+                                <img [src]="interlocutor.avatarUrl" alt="Avatar" class="w-6 h-6 rounded-full object-cover border border-white shadow-sm"/>
+                                <div class="text-left leading-none">
+                                  <span class="text-[8.5px] font-extrabold text-[#0F172A] block">{{ interlocutor.name }}</span>
+                                  <span class="text-[6.5px] text-[#8C7355] font-bold block mt-0.5">{{ interlocutor.role }}</span>
+                                </div>
+                              </div>
+                              <button (click)="removeModuleInterlocutor(module.id, interlocutor.name)" class="text-slate-400 hover:text-red-500 w-5 h-5 flex items-center justify-center rounded-full bg-slate-50 hover:bg-red-50 cursor-pointer border-0 transition-colors">
+                                <span class="material-icons-round text-xs">close</span>
+                              </button>
+                            </div>
+                          }
+                        } @else {
+                          <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-dashed border-slate-200">
+                            <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-400">
+                              <span class="material-icons-round text-xs">person</span>
+                            </div>
+                            <div class="text-left leading-none">
+                              <span class="text-[8.5px] font-extrabold text-slate-400 block">Aucun interlocuteur</span>
+                            </div>
+                          </div>
+                        }
+                      </div>
+
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                      <button (click)="showToast('Ajouter une vidéo au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                        <span class="material-icons-round text-xs">video_call</span>
+                        <span>Ajouter Vidéo</span>
+                      </button>
+                      <button (click)="showToast('Ajouter un document au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                        <span class="material-icons-round text-xs">add_to_photos</span>
+                        <span>Ajouter Doc</span>
+                      </button>
+                    </div>
+                    
+                    <div class="space-y-1">
+                      @for (item of getModuleItems(module.id).slice(0, 3); track item.labelKey) {
+                        <div class="w-full bg-[#FAF8F5] text-[#0F172A] border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 transition">
+                          <span>{{ item.labelKey }}</span>
+                          <span class="material-icons-round text-slate-400 text-sm">expand_more</span>
+                        </div>
+                      }
+                      @if (getModuleItems(module.id).length > 3) {
+                        <div class="w-full text-center text-[10px] font-bold rounded-xl py-1 border text-[#8C7355] bg-[#FAF6F0] border-[#D4AF37]/15">
+                          + {{ getModuleItems(module.id).length - 3 }} autres leçons...
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Button to Add Lesson -->
+                    <button 
+                      (click)="openAddLessonModal(module.id)" 
+                      class="w-full mt-3 py-2 border border-dashed rounded-xl text-[9px] font-black transition-all cursor-pointer flex items-center justify-center gap-1 bg-[#FAF6F0] border-[#D4AF37]/35 text-[#8C7355] hover:bg-[#D4AF37]/25"
+                    >
+                      <span class="material-icons-round text-[10px]">add</span>
+                      <span>Ajouter Leçon</span>
+                    </button>
+
+                  </div>
+                }
+
+              </div>
+            </div>
+
+            <!-- Custom Modal for Adding a Module -->
+            <div *ngIf="showAddModuleModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div class="bg-white rounded-[32px] w-full max-w-md p-6 shadow-2xl border border-white/50 relative animate-fade-in">
+                <button (click)="showAddModuleModal.set(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer border-0">
+                  <span class="material-icons-round text-base">close</span>
+                </button>
+                
+                <div class="flex items-center gap-2.5 mb-4 border-b border-slate-100 pb-3">
+                  <span class="material-icons-round text-xl text-[#8C7355]">add_circle</span>
+                  <h4 class="text-slate-800 font-extrabold text-lg font-display">Créer un Nouveau Module</h4>
+                </div>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-left text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Titre du Module *</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="newModuleTitle"
+                      placeholder="Ex: Sécurité & Règlements..." 
+                      class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-left text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Sous-titre / Traduction (Optionnel)</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="newModuleSubtitle"
+                      placeholder="Ex: Safety & Regulations..." 
+                      class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                    />
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3 mt-6">
+                  <button 
+                    (click)="showAddModuleModal.set(false)" 
+                    class="flex-1 rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    (click)="submitAddModule()" 
+                    class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
+                  >
+                    Créer Module
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Modal for Adding a Lesson -->
+            <div *ngIf="showAddLessonModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div class="bg-white rounded-[32px] w-full max-w-md p-6 shadow-2xl border border-white/50 relative animate-fade-in">
+                <button (click)="showAddLessonModal.set(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer border-0">
+                  <span class="material-icons-round text-base">close</span>
+                </button>
+                
+                <div class="flex items-center gap-2.5 mb-4 border-b border-slate-100 pb-3">
+                  <span class="material-icons-round text-xl text-[#8C7355]">playlist_add</span>
+                  <h4 class="text-slate-800 font-extrabold text-lg font-display">Ajouter une Leçon</h4>
+                </div>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-left text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Nom de la Leçon *</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="newLessonName"
+                      placeholder="Ex: Équipements de protection..." 
+                      class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                    />
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3 mt-6">
+                  <button 
+                    (click)="showAddLessonModal.set(false)" 
+                    class="flex-1 rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    (click)="submitAddLesson()" 
+                    class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
+                  >
+                    Ajouter
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Bottom Parameter & AI Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              <!-- Parameters (Left Card - takes 4 cols) -->
+              <div class="lg:col-span-4 bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Parameters</span>
+                    <span class="text-[9px] font-black text-[#8C7355] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#D4AF37]/20">Paramètres</span>
+                  </div>
+                  
+                  <div class="space-y-3">
+                    <label class="block text-left text-xs font-black text-[#8C7355] uppercase tracking-wider">Filtrage par Département</label>
+                    
+                    <div class="space-y-1.5">
+                      <button 
+                        (click)="builderSelectedDepartment.set('SI')" 
+                        [class.bg-[#FAF6F0]]="builderSelectedDepartment() === 'SI'"
+                        [class.border-[#D4AF37]]="builderSelectedDepartment() === 'SI'"
+                        [class.text-[#8C7355]]="builderSelectedDepartment() === 'SI'"
+                        class="w-full text-left bg-white hover:bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-4 text-xs font-bold transition flex items-center justify-between cursor-pointer"
+                      >
+                        <span>'SI' (Systèmes d'Information)</span>
+                        <span class="material-icons-round text-sm" *ngIf="builderSelectedDepartment() === 'SI'">check_circle</span>
+                      </button>
+
+                      <button 
+                        (click)="builderSelectedDepartment.set('Finance')" 
+                        [class.bg-[#FAF6F0]]="builderSelectedDepartment() === 'Finance'"
+                        [class.border-[#D4AF37]]="builderSelectedDepartment() === 'Finance'"
+                        [class.text-[#8C7355]]="builderSelectedDepartment() === 'Finance'"
+                        class="w-full text-left bg-white hover:bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-4 text-xs font-bold transition flex items-center justify-between cursor-pointer"
+                      >
+                        <span>Finance</span>
+                        <span class="material-icons-round text-sm" *ngIf="builderSelectedDepartment() === 'Finance'">check_circle</span>
+                      </button>
+
+                      <button 
+                        (click)="builderSelectedDepartment.set('BTP')" 
+                        [class.bg-[#FAF6F0]]="builderSelectedDepartment() === 'BTP'"
+                        [class.border-[#D4AF37]]="builderSelectedDepartment() === 'BTP'"
+                        [class.text-[#8C7355]]="builderSelectedDepartment() === 'BTP'"
+                        class="w-full text-left bg-white hover:bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-4 text-xs font-bold transition flex items-center justify-between cursor-pointer"
+                      >
+                        <span>'BTP' (Construction)</span>
+                        <span class="material-icons-round text-sm" *ngIf="builderSelectedDepartment() === 'BTP'">check_circle</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                  <button (click)="showToast('Configuration des paramètres enregistrée')" class="w-full py-2.5 bg-[#1E3A8A] hover:bg-[#0F172A] text-white rounded-xl text-xs font-black shadow-md transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                    <span class="material-icons-round text-sm">save</span>
+                    <span>Enregistrer Paramètres</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ChatGPT QUIZ GENERATED (Center Card - takes 4 cols) -->
+              <div class="lg:col-span-4 bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm flex flex-col justify-between relative">
+                <!-- Decorative rocket icon -->
+                <div class="absolute -top-5 left-6 text-2xl animate-bounce">
+                  🚀
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Quiz IA Généré</span>
+                    <span class="text-[9px] font-black text-[#8C7355] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#D4AF37]/20">ChatGPT Quiz</span>
+                  </div>
+
+                  <div class="bg-[#FAF8F5] border border-slate-200 rounded-2xl p-4 space-y-3 font-mono text-[9px] text-slate-600 leading-normal max-h-[220px] overflow-y-auto shadow-inner">
+                    <div class="border-b border-slate-200/60 pb-1.5 font-bold text-slate-800">Questions:</div>
+                    <div class="space-y-2">
+                      <div>
+                        <span class="font-extrabold text-[#0F172A] block">Question 1: What is the main safety guideline inside the factory?</span>
+                        <span class="block mt-0.5">• Option A: Wear safety gear (Correct)</span>
+                        <span class="block">• Option B: Run inside production zones</span>
+                        <span class="block">• Option C: Ignore helmets</span>
+                      </div>
+                      <div class="border-t border-slate-200/40 pt-1.5">
+                        <span class="font-extrabold text-[#0F172A] block">Question 2: How many companies belong to the group?</span>
+                        <span class="block mt-0.5">• Option A: 5 companies</span>
+                        <span class="block">• Option B: 8 companies (Correct)</span>
+                        <span class="block">• Option C: 12 companies</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 flex gap-2">
+                  <button (click)="showToast('Régénérer le quiz avec l’IA')" class="flex-grow py-2 bg-[#FAF6F0] hover:bg-[#D4AF37]/20 border border-[#D4AF37]/35 text-[#8C7355] rounded-xl text-[10px] font-black transition-all cursor-pointer flex items-center justify-center gap-1">
+                    <span class="material-icons-round text-sm">autorenew</span>
+                    <span>Régénérer</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- OpenAI API parameters (Right Card - takes 4 cols) -->
+              <div class="lg:col-span-4 bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Paramètres IA</span>
+                    <span class="text-[9px] font-black text-[#8C7355] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#D4AF37]/20">OpenAI API</span>
+                  </div>
+
+                  <div class="space-y-5">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white text-base">
+                        🤖
+                      </div>
+                      <div>
+                        <span class="text-xs font-black text-[#0F172A] block">Paramètres OpenAI API</span>
+                        <span class="text-[9px] text-slate-400 font-bold block">Contrôle de la génération</span>
+                      </div>
+                    </div>
+
+                    <!-- Complexity Slider -->
+                    <div class="space-y-2">
+                      <div class="flex justify-between items-center text-xs font-bold">
+                        <span class="text-slate-500">Complexité</span>
+                        <span class="text-[#0F172A] font-extrabold">{{ builderComplexity() }}</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="1" 
+                        max="100" 
+                        [(ngModel)]="builderComplexityVal"
+                        (input)="onComplexityChange($event)"
+                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                      />
+                    </div>
+
+                    <!-- Number of Questions Slider -->
+                    <div class="space-y-2">
+                      <div class="flex justify-between items-center text-xs font-bold">
+                        <span class="text-slate-500">Nombre de Questions</span>
+                        <span class="text-[#0F172A] font-extrabold">{{ builderQuestionsCount() }}</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="5" 
+                        max="20" 
+                        [(ngModel)]="builderQuestionsCountVal"
+                        (input)="onQuestionsCountChange($event)"
+                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-[#FAF8F5]">
+                  <button (click)="showToast('Paramètres OpenAI synchronisés avec l’IA')" class="w-full py-2.5 bg-[#0F172A] hover:bg-[#D4AF37] hover:text-[#0F172A] text-white rounded-xl text-xs font-black shadow-md transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                    <span class="material-icons-round text-sm">sync</span>
+                    <span>Synchroniser Paramètres</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        }
+
+        @if (activeAdminTab() === 'quiz') {
+          <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
+            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
+              <span class="material-icons-round text-3xl">psychology</span>
+            </div>
+            <h3 class="text-xl font-black text-[#0F172A] font-display">Contrôle Quiz IA</h3>
+            <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+              Gérez les questions et les réponses des évaluations d'intégration générées automatiquement par l'intelligence artificielle pour tester l'assimilation des collaborateurs.
+            </p>
+            <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+          </div>
+        }
+
+        @if (activeAdminTab() === 'reports') {
+          <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
+            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
+              <span class="material-icons-round text-3xl">insert_chart</span>
+            </div>
+            <h3 class="text-xl font-black text-[#0F172A] font-display">Rapports & Analyses</h3>
+            <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+              Consultez des analyses détaillées, des graphiques d'intégration globale et exportez les rapports complets de vos collaborateurs au format PDF ou Excel.
+            </p>
+            <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+          </div>
+        }
+
+        @if (activeAdminTab() === 'settings') {
+          <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
+            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
+              <span class="material-icons-round text-3xl">settings</span>
+            </div>
+            <h3 class="text-xl font-black text-[#0F172A] font-display">Paramètres Système</h3>
+            <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+              Configurez les droits d'administration de l'équipe RH, gérez les clés d'intégration d'API et ajustez les paramètres d'envoi automatique de courriels d'accueil.
+            </p>
+            <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+          </div>
+        }
+
+        <!-- global footer in content area -->
+
+        <!-- global footer in content area -->
+        <footer class="text-center text-[10px] text-slate-400 font-extrabold border-t border-slate-200/50 pt-4 mt-6">
+          Ménara Holding © 2026 • Système d'Administration WelcomeWise
+        </footer>
+
+      </main>
+
+      
+    </div>
+  </div>
+</ng-container>
+
+<!-- TOAST NOTIFICATION -->
+<div *ngIf="toastMessage()" class="fixed bottom-6 right-6 bg-[#0F172A] text-white border border-[#D4AF37]/50 px-5 py-3.5 rounded-2xl shadow-2xl z-50 text-xs font-bold flex items-center space-x-3 animate-slide-up">
+  <div class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></div>
+  <span>{{ toastMessage() }}</span>
+</div>

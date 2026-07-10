@@ -1,0 +1,145 @@
+            <!-- 1. Visual Timeline Card -->
+            <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15">
+              <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Visual Timeline</span>
+                <div class="flex items-center gap-2">
+                  <button (click)="addNewModule()" class="py-1 px-3 bg-[#FAF6F0] hover:bg-[#D4AF37]/20 border border-[#D4AF37]/35 text-[#8C7355] rounded-full text-xs font-black transition-all cursor-pointer flex items-center gap-1 shadow-sm">
+                    <span class="material-icons-round text-sm">add_circle</span>
+                    <span>Ajouter Module</span>
+                  </button>
+                  <span class="text-xs font-black text-[#8C7355] bg-[#FAF6F0] px-3 py-1 rounded-full border border-[#D4AF37]/20">Chronologie du Parcours</span>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-start relative">
+                
+                @for (module of onboardingService.modules(); track module.id; let idx = $index) {
+                  <div 
+                    [class.border-[#D4AF37]/20]="module.status === 'completed'"
+                    [class.border-[#D4AF37]/30]="module.status === 'current'"
+                    [class.border-dashed]="module.status === 'locked'"
+                    [class.border-slate-300]="module.status === 'locked'"
+                    [class.opacity-85]="module.status === 'locked'"
+                    class="bg-white border-2 rounded-3xl p-5 shadow-sm relative hover:border-[#D4AF37]/60 transition-all"
+                  >
+                    <!-- Connector Arrow (Desktop) -->
+                    <div *ngIf="idx > 0" class="hidden lg:block absolute top-1/2 -left-4 transform -translate-y-1/2 z-10"
+                         [class.text-[#D4AF37]]="module.status !== 'locked'"
+                         [class.text-slate-300]="module.status === 'locked'">
+                      <span class="material-icons-round text-2xl bg-white rounded-full shadow-sm">arrow_forward</span>
+                    </div>
+
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#8C7355] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                      Module {{ module.id }}
+                    </div>
+                    
+                    <div class="text-center mt-3 mb-3">
+                      <h4 class="text-sm font-black text-[#0F172A]">{{ module.titleKey }}</h4>
+                      <p class="text-[9px] text-[#8C7355] font-bold mt-0.5">{{ module.subtitleKey }}</p>
+                    </div>
+
+                    <!-- Interlocuteur Section -->
+                    <div class="mb-4 bg-[#FAF6F0]/40 border border-[#D4AF37]/15 rounded-2xl p-2.5">
+                      <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1 text-left">Interlocuteur Référent</span>
+                      <div class="flex items-center justify-between" [class.opacity-50]="module.status === 'locked'">
+                        <div class="flex items-center gap-2">
+                          <img 
+                            [src]="module.id === 1 ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=60' : (module.id === 2 ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=60' : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120')" 
+                            alt="Avatar" 
+                            class="w-7 h-7 rounded-full object-cover border border-white shadow-sm"
+                            *ngIf="module.id <= 2"
+                          />
+                          <div class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-slate-400" *ngIf="module.id > 2">
+                            <span class="material-icons-round text-xs">person</span>
+                          </div>
+                          <div class="text-left leading-none">
+                            <span class="text-[9px] font-extrabold text-[#0F172A] block" *ngIf="module.id === 1">Sarah KABBAJ</span>
+                            <span class="text-[9px] font-extrabold text-[#0F172A] block" *ngIf="module.id === 2">Karim BENJELLOUN</span>
+                            <span class="text-[9px] font-extrabold text-slate-400 block" *ngIf="module.id > 2">Aucun assigné</span>
+                            <span class="text-[7px] text-[#8C7355] font-bold block mt-0.5" *ngIf="module.id === 1">DIRECTRICE HSE</span>
+                            <span class="text-[7px] text-[#8C7355] font-bold block mt-0.5" *ngIf="module.id === 2">CHARGÉ D'INTÉGRATION RH</span>
+                          </div>
+                        </div>
+                        <button [disabled]="module.status === 'locked'" (click)="showToast('Sélectionner interlocuteur')" class="px-2 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-[#8C7355] rounded-lg text-[8px] font-bold transition cursor-pointer">
+                          {{ module.status === 'locked' ? 'Choisir' : 'Modifier' }}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 mb-4" *ngIf="module.status !== 'locked'">
+                      <button (click)="showToast('Ajouter une vidéo au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                        <span class="material-icons-round text-xs">video_call</span>
+                        <span>Ajouter Vidéo</span>
+                      </button>
+                      <button (click)="showToast('Ajouter un document au Module ' + module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                        <span class="material-icons-round text-xs">add_to_photos</span>
+                        <span>Ajouter Doc</span>
+                      </button>
+                    </div>
+                    
+                    <div class="space-y-1">
+                      @for (item of getModuleItems(module.id).slice(0, 3); track item.labelKey) {
+                        <div 
+                          [class.bg-[#FAF8F5]]="module.status !== 'locked'"
+                          [class.text-[#0F172A]]="module.status !== 'locked'"
+                          [class.bg-slate-50/50]="module.status === 'locked'"
+                          [class.text-slate-400]="module.status === 'locked'"
+                          class="w-full border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold cursor-pointer hover:border-[#D4AF37]/40 transition"
+                        >
+                          <span>{{ item.labelKey }}</span>
+                          <span class="material-icons-round text-slate-400 text-sm">expand_more</span>
+                        </div>
+                      }
+                      @if (getModuleItems(module.id).length > 3) {
+                        <div 
+                          [class.text-[#8C7355]]="module.status !== 'locked'"
+                          [class.bg-[#FAF6F0]]="module.status !== 'locked'"
+                          [class.border-[#D4AF37]/15]="module.status !== 'locked'"
+                          [class.text-slate-400]="module.status === 'locked'"
+                          [class.bg-slate-100/50]="module.status === 'locked'"
+                          [class.border-slate-200/60]="module.status === 'locked'"
+                          class="w-full text-center text-[10px] font-bold rounded-xl py-1 border"
+                        >
+                          + {{ getModuleItems(module.id).length - 3 }} autres leçons...
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Button to Add Lesson -->
+                    <button 
+                      (click)="addLesson(module.id)" 
+                      [class.bg-[#FAF6F0]]="module.status !== 'locked'"
+                      [class.border-[#D4AF37]/35]="module.status !== 'locked'"
+                      [class.text-[#8C7355]]="module.status !== 'locked'"
+                      [class.hover:bg-[#D4AF37]/25]="module.status !== 'locked'"
+                      [class.bg-slate-100]="module.status === 'locked'"
+                      [class.border-slate-300]="module.status === 'locked'"
+                      [class.text-slate-500]="module.status === 'locked'"
+                      [class.hover:bg-slate-200]="module.status === 'locked'"
+                      class="w-full mt-3 py-2 border border-dashed rounded-xl text-[9px] font-black transition-all cursor-pointer flex items-center justify-center gap-1"
+                    >
+                      <span class="material-icons-round text-[10px]">add</span>
+                      <span>Ajouter Leçon</span>
+                    </button>
+
+                    <div *ngIf="module.status === 'locked'" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center text-xs font-black text-slate-400 border-dashed mt-3 flex items-center justify-center gap-1.5 py-3">
+                      <span class="material-icons-round text-sm">lock</span>
+                      <span>Locked (Verrouillé)</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mt-3" *ngIf="module.status === 'locked'">
+                      <button (click)="showToast('Ajouter une vidéo au Module ' + module.id)" class="py-2 px-1 bg-slate-400 hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                        <span class="material-icons-round text-xs">video_call</span>
+                        <span>Ajouter Vidéo</span>
+                      </button>
+                      <button (click)="showToast('Ajouter un document au Module ' + module.id)" class="py-2 px-1 bg-slate-400 hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                        <span class="material-icons-round text-xs">add_to_photos</span>
+                        <span>Ajouter Doc</span>
+                      </button>
+                    </div>
+
+                  </div>
+                }
+
+              </div>
+            </div>

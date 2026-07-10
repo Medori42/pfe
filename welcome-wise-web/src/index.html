@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>WelcomeWise — Onboarding & HSE</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <script>
+    window.addEventListener('error', function(e) {
+      var div = document.getElementById('runtime-error-banner');
+      if (!div) {
+        div = document.createElement('div');
+        div.id = 'runtime-error-banner';
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.width = '100%';
+        div.style.background = '#EF4444';
+        div.style.color = 'white';
+        div.style.padding = '12px';
+        div.style.zIndex = '999999';
+        div.style.fontSize = '12px';
+        div.style.fontFamily = 'monospace';
+        div.style.fontWeight = 'bold';
+        div.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+        document.body.appendChild(div);
+      }
+      div.innerText = 'ERREUR RUNTIME: ' + e.message + ' at ' + e.filename + ':' + e.lineno + ':' + e.colno;
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      var div = document.getElementById('runtime-error-banner');
+      if (!div) {
+        div = document.createElement('div');
+        div.id = 'runtime-error-banner';
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.width = '100%';
+        div.style.background = '#F59E0B';
+        div.style.color = 'white';
+        div.style.padding = '12px';
+        div.style.zIndex = '999999';
+        div.style.fontSize = '12px';
+        div.style.fontFamily = 'monospace';
+        div.style.fontWeight = 'bold';
+        div.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+        document.body.appendChild(div);
+      }
+      div.innerText = 'PROMISE REJECTED: ' + (e.reason ? e.reason.message || e.reason : 'Unknown reason');
+    });
+  </script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

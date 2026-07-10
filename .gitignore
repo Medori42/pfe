@@ -1,0 +1,30 @@
+# Logs and temporary files
+*.py
+*.txt
+*.log
+.history/
+
+# Angular / Web ignores
+welcome-wise-web/node_modules/
+welcome-wise-web/.angular/
+welcome-wise-web/dist/
+welcome-wise-web/tmp/
+
+# Flutter / Mobile ignores
+welcome_wise/.dart_tool/
+welcome_wise/.flutter-plugins
+welcome_wise/.flutter-plugins-dependencies
+welcome_wise/.packages
+welcome_wise/build/
+welcome_wise/ios/Flutter/Generated.xcconfig
+welcome_wise/ios/Flutter/flutter_export_environment.sh
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

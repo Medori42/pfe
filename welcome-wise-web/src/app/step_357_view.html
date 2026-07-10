@@ -1,0 +1,732 @@
+<!-- DEV SWITCHER FOR JURY -->
+@if ((systemRole() === 'admin' && adminState() === 'login') || (systemRole() === 'employee' && (currentUrl() === '/login' || currentUrl() === '/' || currentUrl() === ''))) {
+  <div class="fixed top-3 left-3 z-50 bg-[#0F172A]/90 backdrop-blur-md border border-[#D4AF37]/50 rounded-full p-1 shadow-xl flex items-center gap-1 select-none text-[10px] font-bold">
+    <span class="text-amber-400 px-3 uppercase tracking-wider">DEV MODE</span>
+    <div class="relative bg-slate-950/60 rounded-full p-0.5 flex items-center w-[180px] h-7 cursor-pointer" (click)="toggleRole()">
+      <!-- Sliding active pill -->
+      <div
+        [class.translate-x-[88px]]="systemRole() === 'admin'"
+        [class.translate-x-0]="systemRole() === 'employee'"
+        class="absolute top-0.5 bottom-0.5 left-0.5 w-[88px] bg-gradient-to-r from-[#D4AF37] to-amber-300 rounded-full transition-transform duration-300 shadow"
+      ></div>
+      <!-- Options -->
+      <span
+        [class.text-[#0F172A]]="systemRole() === 'employee'"
+        [class.text-slate-400]="systemRole() === 'admin'"
+        class="w-[88px] text-center z-10 transition-colors duration-300 font-extrabold text-[10px]"
+      >
+        Employé
+      </span>
+      <span
+        [class.text-[#0F172A]]="systemRole() === 'admin'"
+        [class.text-slate-400]="systemRole() === 'employee'"
+        class="w-[88px] text-center z-10 transition-colors duration-300 font-extrabold text-[10px]"
+      >
+        Admin / RH
+      </span>
+    </div>
+  </div>
+}
+<!-- MISSING LINE 30 -->
+<!-- ========================================== -->
+<!-- 💼 ESPACE EMPLOYÉ                          -->
+<!-- ========================================== -->
+<ng-container *ngIf="systemRole() === 'employee'">
+  <div class="min-h-screen font-sans text-slate-800 flex flex-col relative overflow-hidden">
+    <!-- Navbar (conditional) -->
+    @if (showNavbar()) {
+      <header class="glass-panel sticky top-4 z-50 max-w-6xl mx-auto rounded-3xl shadow-lg border border-white/40 flex items-center justify-between px-6 py-4 mt-4 transition-all duration-300 w-[95%]">
+        <a routerLink="/roadmap" class="flex items-center gap-3 cursor-pointer select-none">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary-blue to-primary-blue-dark flex items-center justify-center shadow-md border-2 border-white">
+            <span class="text-white font-extrabold text-lg">W</span>
+          </div>
+          <span class="text-slate-800 font-extrabold text-xl tracking-tight font-display">WelcomeWise</span>
+        </a>
+<!-- MISSING LINE 45 -->
+        <nav class="flex items-center gap-6">
+          <a routerLink="/roadmap" [class.text-primary-blue]="currentUrl() === '/roadmap'" [class.font-semibold]="currentUrl() === '/roadmap'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">map</span>
+            <span class="hidden sm:inline">Parcours</span>
+          </a>
+          <a routerLink="/lesson" [class.text-primary-blue]="currentUrl() === '/lesson'" [class.font-semibold]="currentUrl() === '/lesson'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">menu_book</span>
+            <span class="hidden sm:inline">Leçon</span>
+          </a>
+          <a routerLink="/quiz" [class.text-primary-blue]="currentUrl() === '/quiz'" [class.font-semibold]="currentUrl() === '/quiz'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">assignment</span>
+            <span class="hidden sm:inline">Quiz HSE</span>
+          </a>
+          <a routerLink="/chatbot" [class.text-primary-blue]="currentUrl() === '/chatbot'" [class.font-semibold]="currentUrl() === '/chatbot'" class="text-slate-600 hover:text-primary-blue transition-colors duration-200 text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons-round text-lg">chat_bubble</span>
+            <span class="hidden sm:inline">Chatbot IA</span>
+          </a>
+        </nav>
+<!-- MISSING LINE 64 -->
+        <div class="flex items-center gap-4">
+          <div class="bg-amber-50 border border-amber-200 rounded-full px-3.5 py-1 flex items-center gap-1">
+            <span class="material-icons-round text-amber-500 text-sm">stars</span>
+            <span class="text-amber-800 font-extrabold text-xs tracking-tight">{{ points() }} Pts</span>
+          </div>
+<!-- MISSING LINE 70 -->
+          <a routerLink="/profile" class="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100/60" title="Paramètres de profil">
+            <span class="material-icons-round text-xl">settings</span>
+          </a>
+<!-- MISSING LINE 74 -->
+          <a routerLink="/profile" class="flex items-center gap-3 cursor-pointer group">
+            <div class="text-right hidden md:block">
+              <div class="text-slate-800 font-bold text-xs group-hover:text-primary-blue transition-colors">Meryem FATHI</div>
+              <div class="text-slate-400 text-[10px] font-semibold">Département HSE</div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-white group-hover:border-primary-blue shadow-md transition-colors">
+          </a>
+<!-- MISSING LINE 82 -->
+          <button (click)="logoutEmployee()" class="text-slate-400 hover:text-red-500 transition-colors cursor-pointer flex items-center justify-center w-8 h-8 rounded-full hover:bg-red-50" title="Déconnexion">
+            <span class="material-icons-round text-lg">logout</span>
+          </button>
+        </div>
+      </header>
+    }
+<!-- MISSING LINE 89 -->
+    <!-- Routed Component -->
+    <main class="w-full flex-grow relative z-10">
+      <router-outlet></router-outlet>
+    </main>
+<!-- MISSING LINE 94 -->
+    @if (showNavbar()) {
+      <footer class="text-center py-6 text-slate-500 font-semibold text-[10px] opacity-75 uppercase tracking-wider">
+        Ménara Holding © 2026 • WelcomeWise Integration Web App
+      </footer>
+    }
+  </div>
+</ng-container>
+<!-- MISSING LINE 102 -->
+<!-- ========================================== -->
+<!-- 💼 ESPACE ADMINISTRATION                   -->
+<!-- ========================================== -->
+<ng-container *ngIf="systemRole() === 'admin'">
+  <div [class]="adminState() === 'login' ? 'min-h-screen bg-gradient-to-br from-[#EAE3D2] via-[#F5ECE3] to-[#DFD0C0] relative flex flex-col items-center justify-center p-4 overflow-hidden' : 'min-h-screen bg-[#FAF8F5] relative flex flex-col overflow-hidden'">
+<!-- MISSING LINE 108 -->
+    @if (adminState() === 'login') {
+      <!-- BACKGROUND NETWORK SYSTEM -->
+      <div class="absolute inset-0 z-0 pointer-events-none opacity-25">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-admin" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#D4AF37" stroke-width="0.3" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-admin)" />
+<!-- MISSING LINE 119 -->
+          <path d="M 150,150 L 250,80 L 350,180 L 200,350 L 100,280 Z" fill="none" stroke="#0F172A" stroke-width="1" stroke-dasharray="3,3" />
+          <path d="M 900,200 L 1100,150 L 1200,320 L 1050,480 L 950,380 Z" fill="none" stroke="#D4AF37" stroke-width="1.2" stroke-dasharray="5,5" />
+          <circle cx="250" cy="80" r="5" fill="#D4AF37" class="animate-pulse" />
+          <circle cx="350" cy="180" r="7" fill="#0F172A" />
+          <circle cx="1200" cy="320" r="8" fill="#D4AF37" />
+        </svg>
+      </div>
+<!-- MISSING LINE 127 -->
+      <!-- ADMIN LOGIN SCREEN -->
+      <div class="flex-grow flex flex-col items-center justify-center py-10 z-10 px-4 relative w-full">
+        <div class="w-full max-w-lg mb-4 text-center">
+          <!-- Header Banner -->
+          <div class="bg-[#F4EFEB]/95 backdrop-blur-md rounded-2xl py-3.5 px-8 shadow-md border border-[#D4AF37]/40 flex items-center justify-center space-x-4 mx-auto max-w-[420px]">
+            <h1 class="text-[#0F172A] text-xl md:text-2xl font-black tracking-wide leading-none">Portail RH & Administration</h1>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4AF37] to-amber-300 flex items-center justify-center shadow-sm">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          </div>
+<!-- MISSING LINE 140 -->
+          <!-- Subtitle -->
+          <div class="mt-4">
+            <h2 class="text-4xl font-extrabold text-[#0F172A] tracking-wider font-display">WelcomeWise</h2>
+            <div class="flex items-center justify-center space-x-1.5 mt-1">
+              <div class="bg-gradient-to-tr from-[#D4AF37] to-amber-200 text-[#0F172A] p-0.5 rounded-full">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M2.166 4.9L10 1.554l7.834 3.346a1.2 1.2 0 0 1 .816 1.13v3.42a12.02 12.02 0 0 1-7.816 11.233.15.15 0 0 1-.134 0l-7.834-3.346A1.2 1.2 0 0 1 2 15.934v-3.42a12.02 12.02 0 0 1 7.816-11.233.15.15 0 0 1 .134 0z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span class="text-xs font-bold text-[#8C7355] tracking-wider uppercase">Ménara Holding</span>
+            </div>
+            <span class="text-[10px] text-slate-500 block font-bold mt-1 font-serif">Ménara Onboarding Platform</span>
+          </div>
+        </div>
+<!-- MISSING LINE 155 -->
+        <!-- Form Card -->
+        <div class="w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border-[3px] border-[#D4AF37] relative transition-transform duration-300 hover:scale-[1.01]">
+<!-- MISSING LINE 158 -->
+          <div class="absolute top-4 left-4 flex flex-col items-center">
+            <span class="p-1.5 bg-[#F5ECE3] rounded-full text-[#D4AF37] border border-[#D4AF37]/30 shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </span>
+            <span class="text-[9px] font-black text-[#8C7355] mt-1">Accès Sécurisé</span>
+          </div>
+<!-- MISSING LINE 167 -->
+          <div class="absolute top-4 right-4 text-[#D4AF37]">
+            <svg class="w-6 h-6 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m-2-2a2 2 0 00-2 2m2-2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2m2 2h2M9 15.586V17h1.586A1 1 0 0111 18v1.586a1 1 0 01-.293.707l-1 1A1 1 0 019 21H7a1 1 0 01-1-1v-2a1 1 0 01.293-.707l1-1A1 1 0 018 16v-1.586a1 1 0 01.293-.707l1.5-1.5z" />
+            </svg>
+          </div>
+<!-- MISSING LINE 173 -->
+          <div class="text-center mt-14 mb-6">
+            <h3 class="text-xl font-black text-[#0F172A] font-display">Connexion Administration</h3>
+          </div>
+<!-- MISSING LINE 177 -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-left text-xs font-black text-[#8C7355] mb-1">E-mail Professionnel</label>
+              <div class="relative">
+                <input type="email" placeholder="Professional Email" [(ngModel)]="adminEmail"
+                       class="w-full text-left pl-3 pr-10 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition font-semibold">
+                <span class="absolute right-3 top-3.5 text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+<!-- MISSING LINE 191 -->
+            <div>
+              <label class="block text-left text-xs font-black text-[#8C7355] mb-1">Mot de Passe</label>
+              <div class="relative">
+                <input [type]="showAdminPassword() ? 'text' : 'password'" placeholder="Password" [(ngModel)]="adminPassword"
+                       class="w-full text-left pl-10 pr-10 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition font-semibold">
+                <span (click)="toggleAdminPassword()" class="absolute left-3 top-3.5 text-slate-400 cursor-pointer hover:text-[#0F172A] transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="!showAdminPassword()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path *ngIf="!showAdminPassword()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    <path *ngIf="showAdminPassword()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88L3 3m12 12l6 6"/>
+                  </svg>
+                </span>
+                <span class="absolute right-3 top-3.5 text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+<!-- MISSING LINE 211 -->
+            <div class="flex items-center justify-between text-xs font-bold pt-1">
+              <a href="javascript:void(0)" class="text-[#1E3A8A] hover:underline">Mot de passe oublié ?</a>
+              <label class="flex items-center space-x-1.5 cursor-pointer select-none">
+                <input type="checkbox" [(ngModel)]="adminRememberMe" class="rounded border-slate-300 text-[#D4AF37]">
+                <span class="text-slate-600">Se souvenir de moi</span>
+              </label>
+            </div>
+<!-- MISSING LINE 219 -->
+            <button (click)="handleAdminLogin()"
+                    class="w-full py-3 mt-4 rounded-xl bg-[#1E3A8A] hover:bg-[#0F172A] text-[#F5EFE6] font-black tracking-wide text-sm shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer">
+              <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m-2-2a2 2 0 00-2 2m2-2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2m2 2h2M9 15.586V17h1.586A1 1 0 0111 18v1.586a1 1 0 01-.293.707l-1 1A1 1 0 019 21H7a1 1 0 01-1-1v-2a1 1 0 01.293-.707l1-1A1 1 0 018 16v-1.586a1 1 0 01.293-.707l1.5-1.5z" />
+              </svg>
+              <span>Connexion</span>
+            </button>
+          </div>
+<!-- MISSING LINE 228 -->
+          <div class="text-center text-[10px] text-slate-400 font-extrabold mt-4 pt-3 border-t border-slate-100">
+            Sécurisé par Bcrypt & Chiffrement Avancé
+          </div>
+        </div>
+<!-- MISSING LINE 233 -->
+        <!-- Bottom Footer elements -->
+        <div class="w-full max-w-4xl flex flex-col md:flex-row items-center justify-between mt-12 text-[10px] text-[#8C7355] font-black border-t border-slate-300/40 pt-4 px-2">
+          <div class="flex items-center space-x-2 relative mb-3 md:mb-0 text-slate-500">
+            <select class="bg-white/90 border border-[#D4AF37]/50 rounded-lg py-1.5 px-3 text-[10px] font-black focus:outline-none cursor-pointer">
+              <option value="fr">Français (French)</option>
+              <option value="ar">العربية (Arabic)</option>
+              <option value="en">English (English)</option>
+            </select>
+            <span class="text-[10px] text-slate-400 font-extrabold">Langue :</span>
+          </div>
+          <div class="mb-3 md:mb-0 text-slate-500 font-extrabold">Ménara Holding © 2026</div>
+          <div class="flex items-center space-x-3 mt-3 md:mt-0 text-slate-500">
+            <div class="flex items-center space-x-1 text-[#8C7355]">
+              <span>Connexion cryptée & sécurisée</span>
+              <svg class="w-3 h-3 text-[#8C7355]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <span class="text-slate-300">|</span>
+            <div class="flex items-center space-x-1.5 text-slate-500">
+              <span>HR System Powered by Spring Security & AI</span>
+              <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+<!-- MISSING LINE 263 -->
+    <!-- SUCCESS ACCESS STATE - PREMIUM DASHBOARD -->
+    <div *ngIf="adminState() === 'dashboard'" class="flex-grow flex flex-row w-full min-h-screen animate-fade-in relative z-10">
+<!-- MISSING LINE 266 -->
+      <!-- 1. SIDEBAR DE GAUCHE -->
+      <aside class="w-72 bg-white border-r border-[#D4AF37]/20 flex flex-col justify-between p-6 shadow-xl relative z-20 flex-shrink-0">
+<!-- MISSING LINE 269 -->
+        <div class="flex flex-col gap-8">
+          <!-- Logo Header -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#D4AF37] to-amber-300 flex items-center justify-center shadow-md">
+              <!-- Custom ChatGPT / IA Icon -->
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.5a6.5 6.5 0 100-13 6.5 6.5 0 000 13z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.25v3M12 18.75v3M2.25 12h3M18.75 12h3" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 12m-2 0a2 2 0 104 0 2 2 0 10-4 0" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-lg font-black text-[#0F172A] tracking-tight leading-none font-display">WelcomeWise</h2>
+              <span class="text-[10px] text-[#8C7355] font-black tracking-widest uppercase block mt-0.5">Admin / RH</span>
+            </div>
+          </div>
+<!-- MISSING LINE 286 -->
+          <!-- Navigation Menu (French only as requested) -->
+          <nav class="flex flex-col gap-1.5">
+            <button
+              (click)="activeAdminTab.set('dashboard')"
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'dashboard'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'dashboard'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'dashboard'"
+              [class.text-slate-600]="activeAdminTab() !== 'dashboard'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">dashboard</span>
+                <span>Tableau de Bord</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'dashboard'"></span>
+            </button>
+<!-- MISSING LINE 303 -->
+            <button
+              (click)="activeAdminTab.set('employees')"
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'employees'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'employees'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'employees'"
+              [class.text-slate-600]="activeAdminTab() !== 'employees'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">people</span>
+                <span>Gestion des Employés</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'employees'"></span>
+            </button>
+<!-- MISSING LINE 318 -->
+            <button
+              (click)="activeAdminTab.set('builder')"
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'builder'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'builder'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'builder'"
+              [class.text-slate-600]="activeAdminTab() !== 'builder'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">route</span>
+                <span>Parcours Builder</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'builder'"></span>
+            </button>
+<!-- MISSING LINE 333 -->
+            <button
+              (click)="activeAdminTab.set('quiz')"
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'quiz'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'quiz'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'quiz'"
+              [class.text-slate-600]="activeAdminTab() !== 'quiz'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">psychology</span>
+                <span>Contrôle Quiz IA</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'quiz'"></span>
+            </button>
+<!-- MISSING LINE 348 -->
+            <button
+              (click)="activeAdminTab.set('reports')"
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'reports'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'reports'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'reports'"
+              [class.text-slate-600]="activeAdminTab() !== 'reports'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">analytics</span>
+                <span>Rapports & Analyses</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'reports'"></span>
+            </button>
+<!-- MISSING LINE 363 -->
+            <button
+              (click)="activeAdminTab.set('settings')"
+              [class.bg-[#D4AF37]]="activeAdminTab() === 'settings'"
+              [class.text-[#0F172A]]="activeAdminTab() === 'settings'"
+              [class.hover:bg-slate-50]="activeAdminTab() !== 'settings'"
+              [class.text-slate-600]="activeAdminTab() !== 'settings'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
+            >
+              <div class="flex items-center gap-3">
+                <span class="material-icons-round text-lg">settings</span>
+                <span>Paramètres</span>
+              </div>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'settings'"></span>
+            </button>
+          </nav>
+        </div>
+<!-- MISSING LINE 380 -->
+        <!-- Sidebar Bottom Footer Area (Connected nodes background + User Info + Logout) -->
+        <div class="relative mt-auto pt-6 border-t border-slate-100 flex flex-col gap-4">
+          <!-- Connect Network Mini Graphic inside sidebar -->
+          <div class="absolute bottom-16 left-0 right-0 h-28 pointer-events-none opacity-20 z-0">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="80" r="3" fill="#D4AF37" />
+              <circle cx="50" cy="40" r="4" fill="#0F172A" />
+              <circle cx="80" cy="70" r="3" fill="#D4AF37" />
+              <circle cx="30" cy="20" r="3" fill="#D4AF37" />
+              <line x1="20" y1="80" x2="50" y2="40" stroke="#D4AF37" stroke-width="0.5" stroke-dasharray="2,2" />
+              <line x1="50" y1="40" x2="80" y2="70" stroke="#D4AF37" stroke-width="0.5" />
+              <line x1="30" y1="20" x2="50" y2="40" stroke="#0F172A" stroke-width="0.5" />
+            </svg>
+          </div>
+<!-- MISSING LINE 395 -->
+          <div class="flex items-center gap-3 relative z-10">
+            <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-[#D4AF37] font-black text-xs">
+              AD
+            </div>
+            <div class="flex-grow">
+              <div class="text-[11px] font-black text-[#0F172A] leading-tight">Admin Ménara</div>
+              <div class="text-[9px] text-[#8C7355] font-black uppercase tracking-wider">Direction RH</div>
+            </div>
+          </div>
+<!-- MISSING LINE 405 -->
+          <button
+            (click)="logoutAdmin()"
+            class="w-full py-2.5 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer relative z-10 flex items-center justify-center gap-2"
+          >
+            <span class="material-icons-round text-sm">logout</span>
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </aside>
+<!-- MISSING LINE 415 -->
+      <!-- 2. CONTENU PRINCIPAL (DÉFILANT) -->
+      <main class="flex-grow p-8 overflow-y-auto bg-[#FAF8F5] space-y-8 flex flex-col justify-between">
+<!-- MISSING LINE 418 -->
+        <!-- Header row -->
+        <div class="flex items-center justify-between border-b border-slate-200/60 pb-5">
+          <div>
+            <h2 class="text-3xl font-black text-[#0F172A] tracking-tight font-display">
+              {{ activeAdminTab() === 'dashboard' ? 'Tableau de Bord' : 'Gestion des Employés' }}
+            </h2>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">
+              {{ activeAdminTab() === 'dashboard' ? "Supervision de l'intégration • Ménara Holding" : "Suivi en temps réel de la progression des nouveaux arrivants" }}
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="p-2 bg-white border border-[#D4AF37]/30 rounded-2xl text-[#8C7355] text-xs font-black shadow-sm flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Serveur Actif
+            </span>
+          </div>
+        </div>
+<!-- MISSING LINE 436 -->
+        @if (activeAdminTab() === 'dashboard') {
+          <!-- row 1: Stats Cards (4 horizontally aligned) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- MISSING LINE 440 -->
+            <!-- Card 1: New Employees -->
+            <div class="bg-white border border-[#D4AF37]/15 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Nouveaux Employés</span>
+                <span class="p-2 bg-amber-50 rounded-2xl text-[#D4AF37] material-icons-round text-lg">person_add</span>
+              </div>
+              <div class="mt-4">
+                <div class="text-4xl font-black text-[#0F172A]">45</div>
+                <span class="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1 mt-1">
+                  <span class="material-icons-round text-xs">arrow_upward</span>
+                  +12% ce mois-ci
+                </span>
+              </div>
+            </div>
+<!-- MISSING LINE 455 -->
+            <!-- Card 2: Completion Rate -->
+            <div class="bg-white border border-[#D4AF37]/15 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Taux d'Étape 2</span>
+                <span class="p-2 bg-[#F5ECE3] rounded-2xl text-[#8C7355] material-icons-round text-lg">donut_large</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between gap-2">
+                <div>
+                  <div class="text-4xl font-black text-[#0F172A]">68%</div>
+                  <span class="text-[10px] text-slate-400 font-bold block mt-1">Moyenne générale</span>
+                </div>
+                <!-- Radial Mini SVG -->
+                <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-slate-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="text-[#D4AF37]" stroke-dasharray="68, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+              </div>
+            </div>
+<!-- MISSING LINE 474 -->
+            <!-- Card 3: Quiz Completed -->
+            <div class="bg-white border border-[#D4AF37]/15 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Quiz Terminés</span>
+                <span class="p-2 bg-indigo-50 rounded-2xl text-indigo-500 material-icons-round text-lg">checklist</span>
+              </div>
+              <div class="mt-4">
+                <div class="text-4xl font-black text-[#0F172A]">112</div>
+                <span class="text-[10px] text-slate-400 font-bold block mt-1">Sur 150 collaborateurs</span>
+              </div>
+            </div>
+<!-- MISSING LINE 486 -->
+            <!-- Card 4: Alertes -->
+            <div class="bg-white border-2 border-red-500/80 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-red-600 uppercase tracking-wider">Alertes Actives</span>
+                <span class="p-1 bg-red-100 rounded-full text-red-500 material-icons-round text-sm animate-pulse">error_outline</span>
+              </div>
+              <div class="mt-3">
+                <div class="text-4xl font-black text-red-600">3</div>
+                <span class="text-[10px] text-red-700 font-extrabold flex items-center gap-1 mt-1 bg-red-50 px-2 py-0.5 rounded-lg border border-red-100 w-fit">
+                  Bloqué : Moussa - Module 2
+                </span>
+              </div>
+            </div>
+          </div>
+<!-- MISSING LINE 501 -->
+          <!-- row 2: Overview Table -->
+          <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15 space-y-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 class="text-lg font-black text-[#0F172A] font-display">Aperçu de l'Intégration</h3>
+                <p class="text-xs text-slate-400 font-bold">Derniers collaborateurs mis à jour</p>
+              </div>
+              <!-- Search bar -->
+              <div class="relative w-full sm:w-72">
+                <input
+                  type="text"
+                  placeholder="Rechercher un employé..."
+                  [ngModel]="adminSearchQuery()"
+                  (ngModelChange)="adminSearchQuery.set($event)"
+                  class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-full py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition font-semibold"
+                />
+                <span class="material-icons-round text-slate-400 text-sm absolute right-4 top-3.5">search</span>
+              </div>
+            </div>
+<!-- MISSING LINE 521 -->
+            <!-- Table Container -->
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-100 text-slate-400 text-[10px] uppercase font-black tracking-wider pb-3">
+                    <th class="py-3 px-4">Collaborateur</th>
+                    <th class="py-3 px-4">Département</th>
+                    <th class="py-3 px-4">Statut</th>
+                    <th class="py-3 px-4">Progression</th>
+                    <th class="py-3 px-4 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-xs">
+<!-- MISSING LINE 535 -->
+                  @for (emp of filteredEmployees().slice(0, 3); track $index) {
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                      <td class="py-4 px-4 flex items-center gap-3">
+                        <img [src]="emp.avatar" alt="avatar" class="w-8 h-8 rounded-full border border-[#D4AF37]/30 shadow-sm" />
+                        <span class="font-extrabold text-[#0F172A]">{{ emp.name }}</span>
+                      </td>
+                      <td class="py-4 px-4 font-bold text-slate-600">
+                        {{ emp.department }}
+                      </td>
+                      <td class="py-4 px-4">
+                        @if (emp.status === 'Actif') {
+                          <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                            Actif
+                          </span>
+                        } @else if (emp.status === 'En cours') {
+                          <span class="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                            En cours
+                          </span>
+                        } @else {
+                          <span class="bg-blue-50 text-blue-600 border border-blue-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                            Complété
+                          </span>
+                        }
+                      </td>
+                      <td class="py-4 px-4">
+                        <div class="flex items-center gap-3">
+                          <span class="font-bold text-[#0F172A] w-7">{{ emp.progress }}%</span>
+                          <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                            <div
+                              [style.width.%]="emp.progress"
+                              [class.bg-emerald-500]="emp.status === 'Actif' || emp.status === 'Complété'"
+                              [class.bg-amber-500]="emp.status === 'En cours'"
+                              class="h-full rounded-full transition-all duration-500"
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="py-4 px-4">
+                        <div class="flex items-center justify-center gap-2">
+                          <button (click)="selectedEmployeeForTrack.set(emp)" class="px-3 py-1.5 rounded-full bg-[#0F172A] text-white hover:bg-[#D4AF37] hover:text-[#0F172A] transition font-black text-[10px] cursor-pointer">
+                            Suivre le parcours
+                          </button>
+                          <button (click)="showToast('Modification de ' + emp.name)" class="px-3 py-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100 transition font-black text-[10px] cursor-pointer">
+                            Modifier
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="5" class="py-8 text-center font-bold text-slate-400">
+                        Aucun collaborateur trouvé pour cette recherche.
+                      </td>
+                    </tr>
+                  }
+<!-- MISSING LINE 591 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+<!-- MISSING LINE 597 -->
+        @if (activeAdminTab() === 'employees') {
+          <!-- GESTION DES EMPLOYÉS TAB -->
+          <div class="bg-white rounded-[32px] p-6 shadow-sm border border-[#D4AF37]/15 space-y-6 animate-fade-in">
+<!-- MISSING LINE 601 -->
+            <!-- Control bar: Add, Search, Filters -->
+            <div class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+<!-- MISSING LINE 604 -->
+              <!-- Left: Ajouter un employé button -->
+              <button (click)="showToast('Ajouter un nouvel employé')" class="px-5 py-3 rounded-full bg-[#1E3A8A] hover:bg-[#0F172A] text-[#F5EFE6] font-black text-xs shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer max-w-fit">
+                <span class="material-icons-round text-sm">person_add</span>
+                <span>Ajouter un employé</span>
+              </button>
+<!-- MISSING LINE 610 -->
+              <!-- Right: Search + Filters -->
+              <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 flex-grow justify-end">
+                <!-- Search bar -->
+                <div class="relative w-full md:w-64">
+                  <input
+                    type="text"
+                    placeholder="Rechercher un employé..."
+                    [ngModel]="adminSearchQuery()"
+                    (ngModelChange)="adminSearchQuery.set($event)"
+                    class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-full py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition font-semibold"
+                  />
+                  <span class="material-icons-round text-slate-400 text-sm absolute right-4 top-3.5">search</span>
+                </div>
+<!-- MISSING LINE 624 -->
+                <!-- Département dropdown filter -->
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-slate-400 font-extrabold uppercase whitespace-nowrap">Département :</span>
+                  <select
+                    [ngModel]="adminSelectedDepartmentFilter()"
+                    (ngModelChange)="adminSelectedDepartmentFilter.set($event)"
+                    class="bg-white border border-[#D4AF37]/40 rounded-xl py-2 px-3 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                  >
+                    <option value="Tous">Tous</option>
+                    <option value="Finance">Finance</option>
+                    <option value="BTP">BTP</option>
+                    <option value="SI">SI</option>
+                  </select>
+                </div>
+<!-- MISSING LINE 639 -->
+                <!-- Statut dropdown filter -->
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-slate-400 font-extrabold uppercase whitespace-nowrap">Statut :</span>
+                  <select
+                    [ngModel]="adminSelectedStatusFilter()"
+                    (ngModelChange)="adminSelectedStatusFilter.set($event)"
+                    class="bg-white border border-[#D4AF37]/40 rounded-xl py-2 px-3 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                  >
+                    <option value="Tous">Tous</option>
+                    <option value="Actif">Actif</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Complété">Complété</option>
+                  </select>
+                </div>
+              </div>
+<!-- MISSING LINE 655 -->
+            </div>
+<!-- MISSING LINE 657 -->
+            <!-- Table Container -->
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-100 text-slate-400 text-[10px] uppercase font-black tracking-wider pb-3">
+                    <th class="py-3 px-4">Photo</th>
+                    <th class="py-3 px-4">Nom</th>
+                    <th class="py-3 px-4">E-mail</th>
+                    <th class="py-3 px-4">Département</th>
+                    <th class="py-3 px-4">Statut</th>
+                    <th class="py-3 px-4">Progression</th>
+                    <th class="py-3 px-4 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-xs">
+<!-- MISSING LINE 673 -->
+                  @for (emp of filteredEmployees(); track $index) {
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                      <!-- Photo -->
+                      <td class="py-4 px-4">
+                        <img [src]="emp.avatar" alt="avatar" class="w-8 h-8 rounded-full border border-[#D4AF37]/30 shadow-sm" />
+                      </td>
+<!-- MISSING LINE 680 -->
+                      <!-- Name -->
+                      <td class="py-4 px-4 font-extrabold text-[#0F172A]">
+                        {{ emp.name }}
+                      </td>
+<!-- MISSING LINE 685 -->
+                      <!-- Email -->
+                      <td class="py-4 px-4 font-semibold text-slate-500">
+                        {{ emp.email }}
+                      </td>
+<!-- MISSING LINE 690 -->
+                      <!-- Department -->
+                      <td class="py-4 px-4 font-bold text-slate-600">
+                        {{ emp.department }}
+                      </td>
+<!-- MISSING LINE 695 -->
+                      <!-- Status Badge -->
+                      <td class="py-4 px-4">
+                        @if (emp.status === 'Actif') {
+                          <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                            Actif
+                          </span>
+                        } @else if (emp.status === 'En cours') {
+                          <span class="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                            En cours
+                          </span>
+                        } @else {
+                          <span class="bg-blue-50 text-blue-600 border border-blue-200 rounded-full px-3 py-1 font-black text-[9px] uppercase tracking-wider">
+                            Complété
+                          </span>
+                        }
+                      </td>
+<!-- MISSING LINE 712 -->
+                      <!-- Progress -->
+                      <td class="py-4 px-4">
+                        <div class="flex flex-col gap-1">
+                          <div class="flex items-center gap-2">
+                            <span class="font-bold text-[#0F172A]">{{ emp.progress }}%</span>
+                            <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                              <div
+                                [style.width.%]="emp.progress"
+                                [class.bg-emerald-500]="emp.status === 'Actif' || emp.status === 'Complété'"
+                                [class.bg-amber-500]="emp.status === 'En cours'"
+                                class="h-full rounded-full transition-all duration-500"
+                              ></div>
+                            </div>
+                          </div>
+                          <span class="text-[9px] text-slate-400 font-bold block">{{ emp.modules }}</span>
+                        </div>
+                      </td>
+<!-- MISSING LINE 730 -->
+                      <!-- Actions -->
+                      <td class="py-4 px-4">
