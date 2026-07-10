@@ -169,32 +169,79 @@ export class App implements OnInit {
     }
   }
 
-  onModuleDocsSelected(moduleId: number, event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
+  readonly showAddDocModal = signal<boolean>(false);
+  readonly activeModuleIdForDoc = signal<number | null>(null);
+  newDocName = '';
+  newDocFileName = '';
+  readonly isDocDragging = signal<boolean>(false);
 
-    const newDocs: Array<{ name: string; fileName: string }> = [];
-    for (let i = 0; i < input.files.length; i++) {
-      const file = input.files[i];
-      newDocs.push({
-        name: file.name,
-        fileName: file.name
-      });
+  openAddDocModal(moduleId: number) {
+    this.activeModuleIdForDoc.set(moduleId);
+    this.newDocName = '';
+    this.newDocFileName = '';
+    this.showAddDocModal.set(true);
+  }
+
+  onDocFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.newDocFileName = file.name;
+      if (!this.newDocName) {
+        this.newDocName = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
+  }
+
+  onDocFileDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDocDragging.set(false);
+    if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+      const file = event.dataTransfer.files[0];
+      this.newDocFileName = file.name;
+      if (!this.newDocName) {
+        this.newDocName = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
+  }
+
+  onDocDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDocDragging.set(true);
+  }
+
+  onDocDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDocDragging.set(false);
+  }
+
+  submitAddDoc() {
+    const moduleId = this.activeModuleIdForDoc();
+    if (!moduleId) return;
+    if (!this.newDocName.trim()) {
+      this.showToast("Veuillez saisir un nom pour le document.");
+      return;
+    }
+    if (!this.newDocFileName) {
+      this.showToast("Veuillez charger un fichier PDF.");
+      return;
     }
 
     this.onboardingService.modules.update(mods => {
       return mods.map(m => {
         if (m.id === moduleId) {
           const existingDocs = m.documents || [];
-          const filteredNewDocs = newDocs.filter(nd => !existingDocs.some(ed => ed.name === nd.name));
-          return { ...m, documents: [...existingDocs, ...filteredNewDocs] };
+          return {
+            ...m,
+            documents: [...existingDocs, { name: this.newDocName + ".pdf", fileName: this.newDocFileName }]
+          };
         }
         return m;
       });
     });
 
-    this.showToast(`${newDocs.length} document(s) ajouté(s) avec succès !`);
-    input.value = '';
+    this.showToast(`Document "${this.newDocName}.pdf" ajouté avec succès !`);
+    this.showAddDocModal.set(false);
   }
 
   removeModuleDocument(moduleId: number, docName: string) {

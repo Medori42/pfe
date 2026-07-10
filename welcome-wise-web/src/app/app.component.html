@@ -1638,8 +1638,7 @@
                         <span>Ajouter Vidéo</span>
                       </button>
                       
-                      <input type="file" accept="application/pdf" multiple #docFileInput (change)="onModuleDocsSelected(module.id, $event)" class="hidden">
-                      <button (click)="docFileInput.click()" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
+                      <button (click)="openAddDocModal(module.id)" class="py-2 px-1 bg-[#8C7355] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
                         <span class="material-icons-round text-xs">add_to_photos</span>
                         <span>Ajouter Doc</span>
                       </button>
@@ -1761,6 +1760,79 @@
                     class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
                   >
                     Ajouter
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Modal for Adding a Document -->
+            <div *ngIf="showAddDocModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div class="bg-white rounded-[32px] w-full max-w-md p-6 shadow-2xl border border-white/50 relative animate-fade-in">
+                <button (click)="showAddDocModal.set(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer border-0">
+                  <span class="material-icons-round text-base">close</span>
+                </button>
+                
+                <div class="flex items-center gap-2.5 mb-4 border-b border-slate-100 pb-3">
+                  <span class="material-icons-round text-xl text-red-500">picture_as_pdf</span>
+                  <h4 class="text-slate-800 font-extrabold text-lg font-display">Ajouter un Document</h4>
+                </div>
+                
+                <div class="space-y-4">
+                  <!-- Drag & Drop PDF Zone -->
+                  <div>
+                    <label class="block text-left text-xs font-black text-slate-500 mb-1.5 uppercase tracking-wider">Fichier PDF *</label>
+                    
+                    <div 
+                      (drop)="onDocFileDrop($event)" 
+                      (dragover)="onDocDragOver($event)" 
+                      (dragleave)="onDocDragLeave($event)"
+                      [class.bg-[#FAF6F0]]="isDocDragging()"
+                      [class.border-[#D4AF37]]="isDocDragging() || newDocFileName"
+                      (click)="docFileInputModal.click()"
+                      class="w-full min-h-[120px] border-2 border-dashed border-[#D4AF37]/40 hover:border-[#D4AF37] rounded-2xl flex flex-col items-center justify-center p-4 cursor-pointer transition-all bg-slate-50/50 hover:bg-[#FAF8F5]/50 select-none text-center"
+                    >
+                      <input type="file" #docFileInputModal class="hidden" accept="application/pdf" (change)="onDocFileSelected($event)">
+                      
+                      @if (newDocFileName) {
+                        <div class="flex items-center gap-4 text-left w-full px-2">
+                          <span class="material-icons-round text-red-500 text-3xl flex-shrink-0">picture_as_pdf</span>
+                          <div class="overflow-hidden">
+                            <span class="text-xs font-extrabold text-[#0F172A] block truncate max-w-[220px]">{{ newDocFileName }}</span>
+                            <span class="text-[9px] text-emerald-600 font-extrabold block mt-0.5">✓ Fichier PDF chargé</span>
+                          </div>
+                        </div>
+                      } @else {
+                        <span class="material-icons-round text-slate-400 text-3xl mb-1">cloud_upload</span>
+                        <span class="text-xs font-bold text-slate-600">Glissez-déposez le PDF ici ou cliquez pour parcourir</span>
+                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">Format supportés : PDF uniquement (Max 10MB)</span>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Document Title Input -->
+                  <div>
+                    <label class="block text-left text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Titre du Document *</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="newDocName"
+                      placeholder="Saisissez un titre personnalisé pour ce PDF..." 
+                      class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/5 transition-all"
+                    />
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3 mt-6">
+                  <button 
+                    (click)="showAddDocModal.set(false)" 
+                    class="flex-1 rounded-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer border-0 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    (click)="submitAddDoc()" 
+                    class="flex-1 rounded-full py-3 bg-primary-blue hover:bg-primary-blue-dark text-white font-extrabold text-xs uppercase cursor-pointer border-0 transition-colors shadow-md shadow-primary-blue/20"
+                  >
+                    Ajouter Doc
                   </button>
                 </div>
               </div>
