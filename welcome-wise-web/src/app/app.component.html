@@ -757,20 +757,7 @@
               <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'builder'"></span>
             </button>
 
-            <button 
-              (click)="activeAdminTab.set('quiz')" 
-              [class.bg-[#D4AF37]]="activeAdminTab() === 'quiz'"
-              [class.text-[#0F172A]]="activeAdminTab() === 'quiz'"
-              [class.hover:bg-slate-50]="activeAdminTab() !== 'quiz'"
-              [class.text-slate-600]="activeAdminTab() !== 'quiz'"
-              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 font-extrabold text-xs cursor-pointer select-none text-left"
-            >
-              <div class="flex items-center gap-3">
-                <span class="material-icons-round text-lg">psychology</span>
-                <span>Contrôle Quiz IA</span>
-              </div>
-              <span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]" *ngIf="activeAdminTab() === 'quiz'"></span>
-            </button>
+
 
             <button 
               (click)="activeAdminTab.set('reports')" 
@@ -2327,18 +2314,7 @@
           </div>
         }
 
-        @if (activeAdminTab() === 'quiz') {
-          <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
-            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
-              <span class="material-icons-round text-3xl">psychology</span>
-            </div>
-            <h3 class="text-xl font-black text-[#0F172A] font-display">Contrôle Quiz IA</h3>
-            <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
-              Gérez les questions et les réponses des évaluations d'intégration générées automatiquement par l'intelligence artificielle pour tester l'assimilation des collaborateurs.
-            </p>
-            <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
-          </div>
-        }
+
 
         @if (activeAdminTab() === 'reports') {
           <div class="space-y-6 animate-fade-in text-left">
