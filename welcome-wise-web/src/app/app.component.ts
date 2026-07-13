@@ -19,6 +19,7 @@ export class App implements OnInit {
   // DEV Switcher ('employee' or 'admin')
   readonly systemRole = signal<'employee' | 'admin'>('employee');
   quizPdfName = '';
+  selectedModuleForQuiz = signal<number>(1);
 
   getModuleItems(moduleId: number) {
     const mod = this.onboardingService.modules().find(m => m.id === moduleId);
@@ -269,6 +270,16 @@ export class App implements OnInit {
     if (input.files && input.files[0]) {
       this.quizPdfName = input.files[0].name;
       this.showToast(`Document "${this.quizPdfName}" ajouté avec succès pour la génération de quiz !`);
+    }
+  }
+
+  assignQuizToModule() {
+    const modId = this.selectedModuleForQuiz();
+    const mod = this.onboardingService.modules().find(m => m.id === Number(modId));
+    if (mod) {
+      this.showToast(`Quiz IA associé et appliqué avec succès au "${mod.titleKey}" !`);
+    } else {
+      this.showToast("Module introuvable !");
     }
   }
 
