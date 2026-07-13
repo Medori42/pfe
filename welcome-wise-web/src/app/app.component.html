@@ -3104,88 +3104,111 @@
                         </button>
                       </div>
 
-                    </div>
+                      <!-- DIVIDER FOR PERMISSIONS -->
+                      <div class="border-t border-slate-100 my-5 pt-4"></div>
 
-                    <!-- Card 2: Customize Permissions (Toggles) -->
-                    <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm relative pt-8">
-                      <!-- Golden/Beige Pill Header -->
-                      <div class="absolute -top-3.5 left-6 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                        Personnaliser les Permissions
+                      <!-- Sub-Section: Customize Permissions (Toggles) inside the same card -->
+                      <div>
+                        <div class="flex items-center justify-between mb-4">
+                          <span class="text-xs font-black text-[#0F172A]">Ajustement des droits pour : <span class="text-[#8C7355]">{{ selectedSettingsRole() }}</span></span>
+                          <span class="text-[8px] font-black text-[#8C7355] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#D4AF37]/20 uppercase">Ajustement</span>
+                        </div>
+
+                        <!-- Permissions Toggles List -->
+                        <div class="space-y-3.5 text-left bg-slate-50/50 p-4 border border-slate-100 rounded-2xl">
+                          
+                          <!-- Toggle 1: Gestion des employés -->
+                          <div class="flex items-center justify-between">
+                            <div class="leading-none">
+                              <span class="text-xs font-extrabold text-[#0F172A] block">Gestion des Employés</span>
+                              <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Accès complet à la table de suivi et fiches collaborateurs</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input 
+                                type="checkbox" 
+                                [checked]="rolePermissions()[selectedSettingsRole()].employeeMgmt" 
+                                (change)="togglePermission('employeeMgmt')"
+                                class="sr-only peer"
+                              >
+                              <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                            </label>
+                          </div>
+
+                          <!-- Toggle 2: Builder de parcours -->
+                          <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                            <div class="leading-none">
+                              <span class="text-xs font-extrabold text-[#0F172A] block">Builder de Parcours</span>
+                              <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Création et modification des modules, leçons et documents</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input 
+                                type="checkbox" 
+                                [checked]="rolePermissions()[selectedSettingsRole()].pathBuilder" 
+                                (change)="togglePermission('pathBuilder')"
+                                class="sr-only peer"
+                              >
+                              <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                            </label>
+                          </div>
+
+                          <!-- Toggle 3: Intelligence Artificielle -->
+                          <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                            <div class="leading-none">
+                              <span class="text-xs font-extrabold text-[#0F172A] block">Intelligence Artificielle</span>
+                              <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Accès au générateur de quiz et modération par IA</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input 
+                                type="checkbox" 
+                                [checked]="rolePermissions()[selectedSettingsRole()].aiControl" 
+                                (change)="togglePermission('aiControl')"
+                                class="sr-only peer"
+                              >
+                              <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                            </label>
+                          </div>
+
+                          <!-- Toggle 4: Rapports -->
+                          <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                            <div class="leading-none">
+                              <span class="text-xs font-extrabold text-[#0F172A] block">Accès aux Rapports</span>
+                              <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Visualisation des statistiques d'intégration et export PDF/Excel</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input 
+                                type="checkbox" 
+                                [checked]="rolePermissions()[selectedSettingsRole()].reports" 
+                                (change)="togglePermission('reports')"
+                                class="sr-only peer"
+                              >
+                              <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                            </label>
+                          </div>
+
+                          <!-- Toggle 5: Envoyer des alertes -->
+                          <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                            <div class="leading-none">
+                              <span class="text-xs font-extrabold text-[#0F172A] block">Envoi d'Alertes</span>
+                              <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Envoi manuel ou automatique de rappels aux collaborateurs</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input 
+                                type="checkbox" 
+                                [checked]="rolePermissions()[selectedSettingsRole()].alerts" 
+                                (change)="togglePermission('alerts')"
+                                class="sr-only peer"
+                              >
+                              <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                            </label>
+                          </div>
+
+                        </div>
+
+                        <div class="text-[7.5px] font-bold text-slate-400 mt-2 leading-relaxed">
+                          Les droits et autorisations sont appliqués en temps réel aux utilisateurs possédant ce rôle.
+                        </div>
                       </div>
 
-                      <div class="flex items-center justify-between mb-4 mt-2">
-                        <span class="text-xs font-black text-[#0F172A]">Ajustement des droits pour : {{ selectedSettingsRole() }}</span>
-                        <span class="text-[8.5px] font-black text-[#8C7355] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#D4AF37]/20 uppercase">Ajustement</span>
-                      </div>
-
-                      <!-- Permissions Toggles List -->
-                      <div class="space-y-3.5 text-left bg-slate-50/50 p-4 border border-slate-100 rounded-2xl">
-                        
-                        <!-- Toggle 1: Gestion des employés -->
-                        <div class="flex items-center justify-between">
-                          <div class="leading-none">
-                            <span class="text-xs font-extrabold text-[#0F172A] block">Gestion des Employés</span>
-                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Accès complet à la table de suivi et fiches collaborateurs</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="permEmployeeMgmt" class="sr-only peer">
-                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
-                          </label>
-                        </div>
-
-                        <!-- Toggle 2: Builder de parcours -->
-                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
-                          <div class="leading-none">
-                            <span class="text-xs font-extrabold text-[#0F172A] block">Builder de Parcours</span>
-                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Création et modification des modules, leçons et documents</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="permPathBuilder" class="sr-only peer">
-                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
-                          </label>
-                        </div>
-
-                        <!-- Toggle 3: Intelligence Artificielle -->
-                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
-                          <div class="leading-none">
-                            <span class="text-xs font-extrabold text-[#0F172A] block">Intelligence Artificielle</span>
-                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Accès au générateur de quiz et modération par IA</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="permAIControl" class="sr-only peer">
-                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
-                          </label>
-                        </div>
-
-                        <!-- Toggle 4: Rapports -->
-                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
-                          <div class="leading-none">
-                            <span class="text-xs font-extrabold text-[#0F172A] block">Accès aux Rapports</span>
-                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Visualisation des statistiques d'intégration et export PDF/Excel</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="permReports" class="sr-only peer">
-                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
-                          </label>
-                        </div>
-
-                        <!-- Toggle 5: Envoyer des alertes -->
-                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
-                          <div class="leading-none">
-                            <span class="text-xs font-extrabold text-[#0F172A] block">Envoi d'Alertes</span>
-                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Envoi manuel ou automatique de rappels aux collaborateurs</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="permAlerts" class="sr-only peer">
-                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
-                          </label>
-                        </div>
-
-                      </div>
-
-                      <div class="text-[7.5px] font-bold text-slate-400 mt-2 leading-relaxed text-left block">
-                        Les droits et autorisations sont appliqués en temps réel aux utilisateurs possédant ce rôle.
-                      </div>
                     </div>
 
                     <!-- Bottom Right Actions (Save & Cancel) -->

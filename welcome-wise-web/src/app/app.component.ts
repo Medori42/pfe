@@ -958,12 +958,28 @@ export class App implements OnInit {
     { name: 'Ali Benjelloun', department: 'BTP', role: 'Employé', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120' }
   ]);
 
-  // Permission toggles
-  permEmployeeMgmt = signal<boolean>(false);
-  permPathBuilder = signal<boolean>(true);
-  permAIControl = signal<boolean>(false);
-  permReports = signal<boolean>(false);
-  permAlerts = signal<boolean>(false);
+  // Mapping of roles to their permissions
+  rolePermissions = signal<Record<string, { employeeMgmt: boolean; pathBuilder: boolean; aiControl: boolean; reports: boolean; alerts: boolean }>>({
+    'Admin': { employeeMgmt: true, pathBuilder: true, aiControl: true, reports: true, alerts: true },
+    'Manager': { employeeMgmt: true, pathBuilder: true, aiControl: false, reports: true, alerts: true },
+    'Employé': { employeeMgmt: false, pathBuilder: false, aiControl: false, reports: false, alerts: false },
+    'RH': { employeeMgmt: false, pathBuilder: true, aiControl: false, reports: false, alerts: false }
+  });
+
+  togglePermission(permName: 'employeeMgmt' | 'pathBuilder' | 'aiControl' | 'reports' | 'alerts') {
+    const activeRole = this.selectedSettingsRole();
+    this.rolePermissions.update(perms => {
+      const rolePerms = perms[activeRole];
+      return {
+        ...perms,
+        [activeRole]: {
+          ...rolePerms,
+          [permName]: !rolePerms[permName]
+        }
+      };
+    });
+    this.showToast(`Permission mise à jour pour le rôle : ${activeRole}`);
+  }
 
   // Filtered settings users computed
   filteredSettingsUsers = computed(() => {
@@ -993,9 +1009,19 @@ export class App implements OnInit {
 
   generatePermissionsWithAI() {
     this.showToast("🤖 Génération intelligente des permissions par l'IA...");
-    // Mock toggling some values to show AI action
-    this.permEmployeeMgmt.set(true);
-    this.permAIControl.set(true);
+    const activeRole = this.selectedSettingsRole();
+    this.rolePermissions.update(perms => {
+      return {
+        ...perms,
+        [activeRole]: {
+          employeeMgmt: true,
+          pathBuilder: true,
+          aiControl: true,
+          reports: false,
+          alerts: true
+        }
+      };
+    });
   }
 
   saveSettingsChanges() {
