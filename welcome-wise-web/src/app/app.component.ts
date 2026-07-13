@@ -773,7 +773,7 @@ export class App implements OnInit {
 
     this.adminEmployees.update(list => [...list, newEmp]);
     this.showAddEmployeeModal.set(false);
-    this.showToast(`Collaborateur ${this.newEmpName} ajouté avec succès !`);
+    this.showToast(`Employé ${this.newEmpName} ajouté avec succès !`);
   }
 
   openEditEmployeeModal(emp: any) {
@@ -853,7 +853,7 @@ export class App implements OnInit {
     });
 
     this.selectedEmployeeForEdit.set(null);
-    this.showToast(`Collaborateur ${this.editEmpName} mis à jour avec succès !`);
+    this.showToast(`Employé ${this.editEmpName} mis à jour avec succès !`);
   }
 
   // Employee State links
