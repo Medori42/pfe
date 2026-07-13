@@ -952,6 +952,37 @@ export class App implements OnInit {
   alertEmailOnFail = signal<boolean>(true);
   alertEmailOnNewEmp = signal<boolean>(false);
   
+  // Alertes & Notifications Sub-Tab States
+  alertOnNewEmployee = true;
+  alertOnFinishJourney = true;
+  alertOnQuizFail = false;
+  inactivityReminderDays = 3;
+  channelDashboard = true;
+  channelEmail = true;
+  channelSms = false;
+  selectedEmailTemplate = 'welcome';
+  emailTemplates: Record<string, { title: string; content: string }> = {
+    'welcome': { 
+      title: 'Message de Bienvenue', 
+      content: 'Bonjour {name}, bienvenue chez Ménara Holding. Nous sommes ravis de vous accueillir dans notre équipe ! Veuillez commencer votre parcours d\'intégration.' 
+    },
+    'congrats': { 
+      title: 'Félicitations de réussite', 
+      content: 'Félicitations {name} ! Vous avez terminé avec succès votre parcours d\'intégration. Nous vous souhaitons une excellente carrière parmi nous.' 
+    },
+    'reminder': { 
+      title: 'Rappel d\'inactivité', 
+      content: 'Bonjour {name}, vous n\'avez pas progressé dans votre parcours d\'intégration depuis 3 jours. N\'oubliez pas de le reprendre dès que possible.' 
+    }
+  };
+  notificationLogs = signal([
+    { type: 'Message de bienvenue', employee: 'Manal Moslih', date: '2026-01-25', channel: 'E-mail', status: 'Envoyé' },
+    { type: 'Félicitations de réussite', employee: 'Mohsine Ghani', date: '2026-01-25', channel: 'E-mail', status: 'Reçu' },
+    { type: 'Rappel d\'inactivité', employee: 'Manal Masabih', date: '2026-01-25', channel: 'Tableau de bord', status: 'Lu' },
+    { type: 'Message de bienvenue', employee: 'Moussa Diop', date: '2026-03-20', channel: 'E-mail', status: 'Envoyé' },
+    { type: 'Rappel d\'inactivité', employee: 'Youssef Alami', date: '2026-04-27', channel: 'SMS', status: 'Reçu' }
+  ]);
+  
   settingsDepartments = signal([
     { name: 'BTP', count: 5, path: 'BTP Standard' },
     { name: 'Finance', count: 10, path: 'BTP Standard' },
@@ -1065,6 +1096,31 @@ export class App implements OnInit {
 
   updateSystemConfig() {
     this.showToast("🔄 Configuration générale du système synchronisée !");
+  }
+
+  getTemplatePreview() {
+    const template = this.emailTemplates[this.selectedEmailTemplate];
+    if (!template) return '';
+    return template.content.replace('{name}', 'Meryem FATHI');
+  }
+
+  saveTemplateChanges() {
+    this.showToast(`💾 Modèle de message "${this.emailTemplates[this.selectedEmailTemplate].title}" enregistré !`);
+  }
+
+  resetTemplateContent() {
+    const defaults: Record<string, string> = {
+      'welcome': 'Bonjour {name}, bienvenue chez Ménara Holding. Nous sommes ravis de vous accueillir dans notre équipe ! Veuillez commencer votre parcours d\'intégration.',
+      'congrats': 'Félicitations {name} ! Vous avez terminé avec succès votre parcours d\'intégration. Nous vous souhaitons une excellente carrière parmi nous.',
+      'reminder': 'Bonjour {name}, vous n\'avez pas progressé dans votre parcours d\'intégration depuis 3 jours. N\'oubliez pas de le reprendre dès que possible.'
+    };
+    const key = this.selectedEmailTemplate;
+    this.emailTemplates[key].content = defaults[key];
+    this.showToast("🔄 Modèle réinitialisé par défaut.");
+  }
+
+  saveNotificationSettings() {
+    this.showToast("🔔 Paramètres et alertes de notification enregistrés !");
   }
 
   showToast(message: string) {
