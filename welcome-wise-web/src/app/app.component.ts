@@ -921,6 +921,22 @@ export class App implements OnInit {
     this.showToast("🔒 Déconnexion réussie.");
   }
 
+  reportSelectedDepartmentFilter = signal<string>('Tous');
+  reportDateRangeFilter = signal<string>('01/01/2026 - 23/01/2026');
+  reportDepartmentsList = ['Tous', 'BTP', 'Finance', 'SI', 'Logistique'];
+
+  exportToPDF() {
+    this.showToast("📄 Exportation du rapport PDF en cours...");
+  }
+
+  exportToExcel() {
+    this.showToast("📊 Exportation du fichier Excel en cours...");
+  }
+
+  downloadDetailedReport() {
+    this.showToast("📥 Téléchargement du rapport d'intégration détaillé...");
+  }
+
   showToast(message: string) {
     this.toastMessage.set(message);
     setTimeout(() => this.toastMessage.set(''), 3000);

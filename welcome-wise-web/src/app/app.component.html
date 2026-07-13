@@ -2349,15 +2349,394 @@
         }
 
         @if (activeAdminTab() === 'reports') {
-          <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
-            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
-              <span class="material-icons-round text-3xl">insert_chart</span>
+          <div class="space-y-6 animate-fade-in text-left">
+            
+            <!-- Main Grid Split: Left (Dashboard content) & Right (Sidebar tools) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              
+              <!-- Left Side: Dashboard Stats and Charts (9 cols) -->
+              <div class="lg:col-span-9 space-y-6">
+                
+                <!-- Title Header Area -->
+                <div class="flex flex-col mb-4">
+                  <span class="text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/25 px-3 py-1 rounded-full uppercase tracking-wider w-fit mb-2">
+                    RAPPORTS & ANALYTICS
+                  </span>
+                  <h2 class="text-2xl font-black text-[#0F172A] font-display leading-tight">
+                    Outils de Filtrage & d'Export - Rapports & Statistiques
+                  </h2>
+                </div>
+
+                <!-- 4 KPI Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  
+                  <!-- KPI 1: Registered Employees (Collaborateurs inscrits) -->
+                  <div class="bg-white border border-[#D4AF37]/15 rounded-[28px] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-[150px] relative overflow-hidden group">
+                    <div class="flex justify-between items-start">
+                      <div class="text-left leading-tight">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Collaborateurs</span>
+                        <span class="text-[11px] font-extrabold text-slate-600 block">Inscrits</span>
+                      </div>
+                      <span class="material-icons-round text-lg text-[#8C7355]/40 group-hover:scale-110 transition-transform">people</span>
+                    </div>
+                    <div class="my-1 text-left">
+                      <span class="text-3xl font-black text-[#0F172A] font-display">45</span>
+                      <span class="text-[8px] text-slate-400 font-bold block mt-0.5">ex. ce mois-ci</span>
+                    </div>
+                    <!-- Golden SVG Sparkline -->
+                    <div class="absolute bottom-0 left-0 right-0 h-10 w-full overflow-hidden">
+                      <svg viewBox="0 0 150 40" class="w-full h-full" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.25" />
+                            <stop offset="100%" stop-color="#D4AF37" stop-opacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M0 35 Q20 15, 40 28 T80 12 T120 25 T160 5 L160 40 L0 40 Z" fill="url(#sparkline-grad)"/>
+                        <path d="M0 35 Q20 15, 40 28 T80 12 T120 25 T160 5" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- KPI 2: Overall Completion Rate (Taux de complétion global) -->
+                  <div class="bg-white border border-[#D4AF37]/15 rounded-[28px] p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between h-[150px] relative group">
+                    <div class="flex flex-col justify-between h-full w-[60%]">
+                      <div class="text-left leading-tight">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Taux Global</span>
+                        <span class="text-[11px] font-extrabold text-slate-600 block">Complétion</span>
+                      </div>
+                      <div class="text-left">
+                        <span class="text-xs font-extrabold text-[#8C7355] block">68% complété</span>
+                        <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Progression cible</span>
+                      </div>
+                    </div>
+                    <!-- Radial Progress SVG -->
+                    <div class="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
+                      <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                        <path class="text-slate-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path class="text-[#8C7355]" stroke-width="3" stroke-dasharray="68, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      </svg>
+                      <span class="absolute text-xs font-black text-[#0F172A] font-display">68%</span>
+                    </div>
+                  </div>
+
+                  <!-- KPI 3: Avg. Quiz Score (Moyenne des Quiz) -->
+                  <div class="bg-white border border-[#D4AF37]/15 rounded-[28px] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-[150px] relative group">
+                    <div class="flex justify-between items-start">
+                      <div class="text-left leading-tight">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Moyenne</span>
+                        <span class="text-[11px] font-extrabold text-slate-600 block">Scores Quiz</span>
+                      </div>
+                      <span class="material-icons-round text-lg text-emerald-500 group-hover:scale-110 transition-transform">trending_up</span>
+                    </div>
+                    <div class="my-1 text-left flex items-baseline gap-1">
+                      <span class="text-3xl font-black text-[#0F172A] font-display">82%</span>
+                      <span class="text-[9px] text-emerald-600 font-extrabold flex items-center">
+                        <span class="material-icons-round text-[10px]">arrow_upward</span> +3%
+                      </span>
+                    </div>
+                    <div class="text-left border-t border-slate-100 pt-1.5">
+                      <span class="text-[8px] text-slate-400 font-bold block">Généré via IA ChatGPT</span>
+                    </div>
+                  </div>
+
+                  <!-- KPI 4: Avg. Onboarding Time (Durée moyenne d'intégration) -->
+                  <div class="bg-white border border-[#D4AF37]/15 rounded-[28px] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-[150px] relative group">
+                    <div class="flex justify-between items-start">
+                      <div class="text-left leading-tight">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Durée Moyenne</span>
+                        <span class="text-[11px] font-extrabold text-slate-600 block">Intégration</span>
+                      </div>
+                      <span class="material-icons-round text-lg text-slate-400">schedule</span>
+                    </div>
+                    <div class="my-1 text-left">
+                      <span class="text-3xl font-black text-[#0F172A] font-display">14 jours</span>
+                    </div>
+                    <!-- Custom Horizontal Progress Bar -->
+                    <div class="w-full space-y-1">
+                      <div class="flex justify-between text-[8px] font-bold text-slate-400">
+                        <span>Objectif: 20j</span>
+                        <span>70% complété</span>
+                      </div>
+                      <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-[#8C7355] h-full rounded-full" style="width: 70%"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Middle Row: Donut Chart & Bar Chart -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  
+                  <!-- Card Left: Statistiques d'intégration (Donut Chart) -->
+                  <div class="md:col-span-6 bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm flex flex-col items-center relative min-h-[300px]">
+                    <!-- Golden/Beige Pill Header -->
+                    <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-sm">
+                      Statistiques d'intégration
+                    </div>
+
+                    <div class="w-full flex items-center justify-around mt-8 h-full">
+                      <!-- Donut SVG -->
+                      <div class="relative w-32 h-32 flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                          <!-- Background base circle -->
+                          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#FAF8F5" stroke-width="4.5"/>
+                          
+                          <!-- Completed (green): 68%, starts at 25 (top) -->
+                          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#10B981" stroke-width="4.5" stroke-dasharray="68 100" stroke-dashoffset="25" stroke-linecap="round"/>
+                          
+                          <!-- En cours (yellow): 25%, starts at 25 - 68 = -43 -->
+                          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#F59E0B" stroke-width="4.5" stroke-dasharray="25 100" stroke-dashoffset="-43" stroke-linecap="round"/>
+                          
+                          <!-- Halted/Suspendu (red): 7%, starts at -43 - 25 = -68 -->
+                          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#EF4444" stroke-width="4.5" stroke-dasharray="7 100" stroke-dashoffset="-68" stroke-linecap="round"/>
+                        </svg>
+                        
+                        <!-- Inner donut info -->
+                        <div class="absolute flex flex-col items-center leading-none">
+                          <span class="text-lg font-black text-[#0F172A] font-display">68%</span>
+                          <span class="text-[7.5px] text-slate-400 font-extrabold uppercase mt-0.5">Complété</span>
+                        </div>
+                      </div>
+
+                      <!-- Donut Legends -->
+                      <div class="space-y-2.5 text-left flex-shrink-0">
+                        <div class="flex items-center gap-2">
+                          <span class="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm flex-shrink-0"></span>
+                          <div class="leading-none">
+                            <span class="text-[9.5px] font-black text-slate-700 block">Complété</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">31 Collaborateurs (68%)</span>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-sm flex-shrink-0"></span>
+                          <div class="leading-none">
+                            <span class="text-[9.5px] font-black text-slate-700 block">En cours</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">11 Collaborateurs (25%)</span>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444] shadow-sm flex-shrink-0"></span>
+                          <div class="leading-none">
+                            <span class="text-[9.5px] font-black text-slate-700 block">Suspendu</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">3 Collaborateurs (7%)</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card Right: Performance par département (Bar Chart) -->
+                  <div class="md:col-span-6 bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm flex flex-col items-center relative min-h-[300px]">
+                    <!-- Golden/Beige Pill Header -->
+                    <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-sm">
+                      Performance par département
+                    </div>
+
+                    <!-- Bar Chart Grid Layout -->
+                    <div class="w-full flex items-end justify-between mt-10 px-4 h-[180px] relative">
+                      <!-- Grid horizontal line markers -->
+                      <div class="absolute inset-0 flex flex-col justify-between pointer-events-none select-none text-slate-300">
+                        <div class="border-b border-dashed border-slate-100 w-full h-0"></div>
+                        <div class="border-b border-dashed border-slate-100 w-full h-0"></div>
+                        <div class="border-b border-dashed border-slate-100 w-full h-0"></div>
+                        <div class="border-b border-dashed border-slate-100 w-full h-0"></div>
+                        <div class="border-b border-dashed border-slate-100 w-full h-0"></div>
+                      </div>
+
+                      <!-- Y-axis markers (labels) -->
+                      <div class="absolute -left-1.5 inset-y-0 flex flex-col justify-between text-[7.5px] font-black text-slate-400 pointer-events-none select-none">
+                        <span>100%</span>
+                        <span>80%</span>
+                        <span>60%</span>
+                        <span>40%</span>
+                        <span>20%</span>
+                        <span>0%</span>
+                      </div>
+
+                      <!-- BTP Bar -->
+                      <div class="flex flex-col items-center gap-2 z-10 w-1/4">
+                        <div class="text-[9px] font-black text-[#8C7355]">85%</div>
+                        <div class="w-8 bg-[#8C7355] rounded-t-lg transition-all duration-700 shadow-sm" style="height: 120px"></div>
+                        <span class="text-[9px] font-bold text-[#0F172A]">BTP</span>
+                      </div>
+
+                      <!-- Finance Bar -->
+                      <div class="flex flex-col items-center gap-2 z-10 w-1/4">
+                        <div class="text-[9px] font-black text-[#D4AF37]">68%</div>
+                        <div class="w-8 bg-[#D4AF37] rounded-t-lg transition-all duration-700 shadow-sm" style="height: 96px"></div>
+                        <span class="text-[9px] font-bold text-[#0F172A]">Finance</span>
+                      </div>
+
+                      <!-- SI Bar -->
+                      <div class="flex flex-col items-center gap-2 z-10 w-1/4">
+                        <div class="text-[9px] font-black text-[#0F172A]">75%</div>
+                        <div class="w-8 bg-[#0F172A] rounded-t-lg transition-all duration-700 shadow-sm" style="height: 106px"></div>
+                        <span class="text-[9px] font-bold text-[#0F172A]">SI</span>
+                      </div>
+
+                      <!-- Logistique Bar -->
+                      <div class="flex flex-col items-center gap-2 z-10 w-1/4">
+                        <div class="text-[9px] font-black text-slate-400">60%</div>
+                        <div class="w-8 bg-slate-300 rounded-t-lg transition-all duration-700 shadow-sm" style="height: 85px"></div>
+                        <span class="text-[9px] font-bold text-[#0F172A]">Logistique</span>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Bottom Row: Quiz Analytics Table (Spans full width of left content area) -->
+                <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm relative pt-8">
+                  <!-- Golden/Beige Pill Header -->
+                  <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-sm">
+                    Analyse des Quiz
+                  </div>
+
+                  <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-black text-[#0F172A]">Détail des résultats par thématique</span>
+                    <span class="text-[9px] font-black text-[#8C7355] bg-[#FAF6F0] px-2.5 py-1 rounded-md border border-[#D4AF37]/20 uppercase">
+                      Quiz Analytics Table
+                    </span>
+                  </div>
+
+                  <!-- Table Wrapper -->
+                  <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                    <table class="w-full text-left border-collapse">
+                      <thead>
+                        <tr class="bg-[#FAF8F5] border-b border-slate-100 text-slate-400 text-[9.5px] font-black uppercase tracking-wider">
+                          <th class="py-3 px-4 text-left">Sujet</th>
+                          <th class="py-3 px-4 text-center">Score Moyen</th>
+                          <th class="py-3 px-4 text-center">Complexité</th>
+                          <th class="py-3 px-4 text-center">Nombre de Tentatives</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-50 text-[11px] font-bold text-slate-700">
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                          <td class="py-3.5 px-4 text-left font-extrabold text-[#0F172A]">Culture d'entreprise</td>
+                          <td class="py-3.5 px-4 text-center text-emerald-600 font-extrabold">92%</td>
+                          <td class="py-3.5 px-4 text-center">
+                            <span class="px-2 py-0.5 text-[8.5px] font-black rounded-md uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200/50">Faible</span>
+                          </td>
+                          <td class="py-3.5 px-4 text-center text-slate-500">6</td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                          <td class="py-3.5 px-4 text-left font-extrabold text-[#0F172A]">Sécurité au travail</td>
+                          <td class="py-3.5 px-4 text-center text-[#8C7355] font-extrabold">75%</td>
+                          <td class="py-3.5 px-4 text-center">
+                            <span class="px-2 py-0.5 text-[8.5px] font-black rounded-md uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-200/50">Moyenne</span>
+                          </td>
+                          <td class="py-3.5 px-4 text-center text-slate-500">7</td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                          <td class="py-3.5 px-4 text-left font-extrabold text-[#0F172A]">Métiers & Processus</td>
+                          <td class="py-3.5 px-4 text-center text-[#8C7355] font-extrabold">75%</td>
+                          <td class="py-3.5 px-4 text-center">
+                            <span class="px-2 py-0.5 text-[8.5px] font-black rounded-md uppercase tracking-wider bg-red-50 text-red-600 border border-red-200/50">Élevée</span>
+                          </td>
+                          <td class="py-3.5 px-4 text-center text-slate-500">3</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Right Side: Sidebar Filtering & Exportation (3 cols) -->
+              <div class="lg:col-span-3 space-y-4">
+                
+                <!-- Main Tools Card -->
+                <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm flex flex-col justify-between relative pt-8 min-h-[350px]">
+                  
+                  <!-- Golden/Beige Pill Header -->
+                  <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-sm">
+                    Filtrage & Exportation
+                  </div>
+
+                  <div class="space-y-4">
+                    
+                    <!-- Date Picker Filter -->
+                    <div class="space-y-1 text-left">
+                      <label class="block text-[9.5px] font-black text-slate-400 uppercase tracking-wider">Date de Filtrage</label>
+                      <div class="relative">
+                        <span class="material-icons-round absolute left-3 top-2.5 text-xs text-slate-400">calendar_today</span>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="reportDateRangeFilter"
+                          class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-8 pr-3 text-xs font-semibold focus:outline-none focus:border-[#8C7355] transition-all"
+                        >
+                      </div>
+                    </div>
+
+                    <!-- Department Dropdown Filter -->
+                    <div class="space-y-1 text-left">
+                      <label class="block text-[9.5px] font-black text-slate-400 uppercase tracking-wider">Département</label>
+                      <div class="relative">
+                        <span class="material-icons-round absolute left-3 top-2.5 text-xs text-slate-400">lan</span>
+                        <select 
+                          [(ngModel)]="reportSelectedDepartmentFilter"
+                          class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-8 pr-8 text-xs font-semibold focus:outline-none focus:border-[#8C7355] transition-all appearance-none cursor-pointer"
+                        >
+                          @for (dep of reportDepartmentsList; track dep) {
+                            <option [value]="dep">{{ dep }}</option>
+                          }
+                        </select>
+                        <span class="material-icons-round absolute right-3 top-2.5 text-xs text-slate-400 pointer-events-none">expand_more</span>
+                      </div>
+                    </div>
+
+                    <!-- Export actions -->
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                      <label class="block text-[9.5px] font-black text-slate-400 uppercase tracking-wider text-left">Actions rapides d'export</label>
+                      
+                      <div class="grid grid-cols-2 gap-2">
+                        <!-- Export PDF Button -->
+                        <button 
+                          (click)="exportToPDF()"
+                          class="py-2.5 bg-[#FAF6F0] hover:bg-[#D4AF37]/15 border border-[#D4AF37]/35 text-[#8C7355] rounded-xl text-[9px] font-black transition-all cursor-pointer flex items-center justify-center gap-1"
+                        >
+                          <span class="material-icons-round text-xs">picture_as_pdf</span>
+                          <span>Exporter PDF</span>
+                        </button>
+
+                        <!-- Export Excel Button -->
+                        <button 
+                          (click)="exportToExcel()"
+                          class="py-2.5 bg-[#FAF6F0] hover:bg-[#D4AF37]/15 border border-[#D4AF37]/35 text-[#8C7355] rounded-xl text-[9px] font-black transition-all cursor-pointer flex items-center justify-center gap-1"
+                        >
+                          <span class="material-icons-round text-xs">description</span>
+                          <span>Exporter Excel</span>
+                        </button>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <!-- Download Detailed Report -->
+                  <div class="pt-6 border-t border-slate-100 mt-6">
+                    <button 
+                      (click)="downloadDetailedReport()"
+                      class="w-full py-3 bg-[#1E3A8A] hover:bg-[#0F172A] text-white rounded-xl text-xs font-black shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 border-none"
+                    >
+                      <span class="material-icons-round text-sm">download</span>
+                      <span>Télécharger le rapport</span>
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
-            <h3 class="text-xl font-black text-[#0F172A] font-display">Rapports & Analyses</h3>
-            <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
-              Consultez des analyses détaillées, des graphiques d'intégration globale et exportez les rapports complets de vos collaborateurs au format PDF ou Excel.
-            </p>
-            <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+
           </div>
         }
 
