@@ -938,7 +938,19 @@ export class App implements OnInit {
   }
 
   // System Settings States
-  activeSettingsTab = signal<string>('roles');
+  activeSettingsTab = signal<string>('account');
+  profileName = 'Meryem FATHI';
+  profileEmail = 'meryem.fathi@menaraholding.ma';
+  oldPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  openaiApiKey = 'sk-proj-••••••••••••••••••••••••';
+  openaiDefaultPrompt = 'Répondre toujours par des questions à choix multiples en français. Mettre l\'accent sur les règles de sécurité en usine.';
+  openaiTemperature = 0.7;
+  openaiModel = 'gpt-4o';
+  alertEmailOnFinish = signal<boolean>(true);
+  alertEmailOnFail = signal<boolean>(true);
+  alertEmailOnNewEmp = signal<boolean>(false);
   
   settingsDepartments = signal([
     { name: 'BTP', count: 5, path: 'BTP Standard' },
@@ -1026,6 +1038,33 @@ export class App implements OnInit {
 
   saveSettingsChanges() {
     this.showToast("💾 Paramètres et permissions enregistrés avec succès !");
+  }
+
+  saveProfileInfo() {
+    this.showToast("👤 Informations du profil de Meryem FATHI enregistrées !");
+  }
+
+  updatePassword() {
+    if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
+      this.showToast("❌ Veuillez remplir tous les champs de mot de passe !");
+      return;
+    }
+    if (this.newPassword !== this.confirmPassword) {
+      this.showToast("❌ Les nouveaux mots de passe ne correspondent pas !");
+      return;
+    }
+    this.showToast("🔑 Mot de passe mis à jour avec chiffrement bcrypt !");
+    this.oldPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+  }
+
+  updateAiPrompt() {
+    this.showToast("🤖 Invite (Prompt) IA mis à jour avec succès !");
+  }
+
+  updateSystemConfig() {
+    this.showToast("🔄 Configuration générale du système synchronisée !");
   }
 
   showToast(message: string) {
