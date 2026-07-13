@@ -34,6 +34,7 @@ export interface OnboardingModule {
   interlocutorsList?: Interlocutor[];
   documents?: Array<{ name: string; fileName: string }>;
   videos?: Array<{ name: string; url: string }>;
+  quiz?: Array<{ questionText: string; options: string[]; correctOptionIndex: number }>;
 }
 
 export interface Badge {
@@ -90,6 +91,18 @@ export class OnboardingService {
           role: 'DIRECTRICE HSE',
           avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=60'
         }
+      ],
+      quiz: [
+        {
+          questionText: "Quelle est l'année de fondation de Ménara Holding ?",
+          options: ["1976", "2002", "1995"],
+          correctOptionIndex: 0
+        },
+        {
+          questionText: "Quel est le secteur d'activité historique du groupe ?",
+          options: ["Le Transport", "Le BTP et l'immobilier", "L'agriculture"],
+          correctOptionIndex: 1
+        }
       ]
     },
     {
@@ -122,6 +135,18 @@ export class OnboardingService {
           name: 'Karim BENJELLOUN',
           role: "CHARGÉ D'INTÉGRATION RH",
           avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=60'
+        }
+      ],
+      quiz: [
+        {
+          questionText: "Quel équipement est strictement obligatoire sur chantier ?",
+          options: ["Le casque de chantier", "Les lunettes de soleil", "Le gilet de sport"],
+          correctOptionIndex: 0
+        },
+        {
+          questionText: "Que faire en cas d'accident sur le site ?",
+          options: ["Prendre des photos", "Alerter le superviseur HSE immédiatement", "Continuer de travailler"],
+          correctOptionIndex: 1
         }
       ]
     },
