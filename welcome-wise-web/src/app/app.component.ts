@@ -975,6 +975,7 @@ export class App implements OnInit {
       content: 'Bonjour {name}, vous n\'avez pas progressé dans votre parcours d\'intégration depuis 3 jours. N\'oubliez pas de le reprendre dès que possible.' 
     }
   };
+  notificationSearchQuery = signal<string>('');
   notificationLogs = signal([
     { type: 'Message de bienvenue', employee: 'Manal Moslih', date: '2026-01-25', channel: 'E-mail', status: 'Envoyé' },
     { type: 'Félicitations de réussite', employee: 'Mohsine Ghani', date: '2026-01-25', channel: 'E-mail', status: 'Reçu' },
@@ -982,6 +983,13 @@ export class App implements OnInit {
     { type: 'Message de bienvenue', employee: 'Moussa Diop', date: '2026-03-20', channel: 'E-mail', status: 'Envoyé' },
     { type: 'Rappel d\'inactivité', employee: 'Youssef Alami', date: '2026-04-27', channel: 'SMS', status: 'Reçu' }
   ]);
+  filteredNotificationLogs = computed(() => {
+    const q = this.notificationSearchQuery().toLowerCase().trim();
+    if (!q) return this.notificationLogs();
+    return this.notificationLogs().filter(log => 
+      log.employee.toLowerCase().includes(q)
+    );
+  });
   
   settingsDepartments = signal([
     { name: 'BTP', count: 5, path: 'BTP Standard' },
