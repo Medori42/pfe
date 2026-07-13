@@ -121,19 +121,15 @@
               <!-- Role, Department and Status Grid -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
-                <!-- Role Selection -->
+                <!-- Numéro de téléphone -->
                 <div>
-                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Rôle</label>
-                  <select 
-                    [(ngModel)]="editEmpRole"
-                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
-                  >
-                    <option value="Collaborateur">Collaborateur</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Chef d'équipe">Chef d'équipe</option>
-                    <option value="Directeur">Directeur</option>
-                    <option value="Stagiaire">Stagiaire</option>
-                  </select>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Numéro de téléphone</label>
+                  <input 
+                    type="tel"
+                    placeholder="Ex: 0612345678"
+                    [(ngModel)]="editEmpPhone"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
                 </div>
 
                 <!-- Department Selection -->
@@ -272,19 +268,15 @@
               <!-- Role, Department and Status Grid -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
-                <!-- Role Selection -->
+                <!-- Numéro de téléphone -->
                 <div>
-                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Rôle</label>
-                  <select 
-                    [(ngModel)]="newEmpRole"
-                    class="w-full bg-white border border-slate-300 text-slate-700 rounded-xl py-2.5 px-3 text-xs font-bold focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition cursor-pointer"
-                  >
-                    <option value="Collaborateur">Collaborateur</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Chef d'équipe">Chef d'équipe</option>
-                    <option value="Directeur">Directeur</option>
-                    <option value="Stagiaire">Stagiaire</option>
-                  </select>
+                  <label class="block text-left text-xs font-black text-[#8C7355] mb-1.5 uppercase tracking-wider">Numéro de téléphone</label>
+                  <input 
+                    type="tel"
+                    placeholder="Ex: 0612345678"
+                    [(ngModel)]="newEmpPhone"
+                    class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl py-2.5 px-4 text-xs focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition font-semibold"
+                  />
                 </div>
 
                 <!-- Department Selection -->
@@ -972,7 +964,7 @@
                         <img [src]="emp.avatar" alt="avatar" class="w-8 h-8 rounded-full border border-[#D4AF37]/30 shadow-sm" />
                         <div>
                           <span class="font-extrabold text-[#0F172A] block leading-tight">{{ emp.name }}</span>
-                          <span class="text-[9px] text-[#8C7355] font-black block mt-0.5 uppercase tracking-wide">{{ emp.role || 'Collaborateur' }}</span>
+                          <span class="text-[9px] text-[#8C7355] font-black block mt-0.5 uppercase tracking-wide">{{ emp.phone || 'Non renseigné' }}</span>
                         </div>
                       </td>
                     <td class="py-4 px-4 font-bold text-slate-600">
@@ -1287,7 +1279,7 @@
                     <!-- Nom -->
                     <td class="py-4 px-4">
                       <span class="font-extrabold text-[#0F172A] block leading-tight">{{ emp.name }}</span>
-                      <span class="text-[9px] text-[#8C7355] font-black block mt-0.5 uppercase tracking-wide">{{ emp.role || 'Collaborateur' }}</span>
+                      <span class="text-[9px] text-[#8C7355] font-black block mt-0.5 uppercase tracking-wide">{{ emp.phone || 'Non renseigné' }}</span>
                     </td>
 
                     <!-- E-mail -->

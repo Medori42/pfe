@@ -611,9 +611,9 @@ export class App implements OnInit {
   readonly adminSearchQuery = signal<string>('');
 
   readonly adminEmployees = signal([
-    { name: 'Mohamed El Fassi', email: 'mohitasaaa@gmail.com', role: 'Collaborateur', department: 'Finance', status: 'Succès', progress: 85, modules: '17/20 modules', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120' },
-    { name: 'Matam Laolah', email: 'matam.laolah@gmail.com', role: 'Manager', department: 'Finance', status: 'Suspendu', progress: 30, modules: '6/20 modules', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120' },
-    { name: 'Mohamed El Fassi', email: 'mohitasaaa@gmail.com', role: 'Chef d\'équipe', department: 'Finance', status: 'Suspendu', progress: 30, modules: '6/20 modules', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120' }
+    { name: 'Mohamed El Fassi', email: 'mohitasaaa@gmail.com', phone: '0611223344', department: 'Finance', status: 'Succès', progress: 85, modules: '17/20 modules', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120' },
+    { name: 'Matam Laolah', email: 'matam.laolah@gmail.com', phone: '0655667788', department: 'Finance', status: 'Suspendu', progress: 30, modules: '6/20 modules', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120' },
+    { name: 'Mohamed El Fassi', email: 'mohitasaaa@gmail.com', phone: '0699001122', department: 'Finance', status: 'Suspendu', progress: 30, modules: '6/20 modules', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120' }
   ]);
 
   readonly selectedEmployeeForTrack = signal<any | null>(null);
@@ -678,7 +678,7 @@ export class App implements OnInit {
   newEmpName = '';
   newEmpEmail = '';
   newEmpPassword = '';
-  newEmpRole = 'Collaborateur';
+  newEmpPhone = '';
   newEmpDepartment = 'Finance';
   newEmpStatus = 'Actif';
   newEmpAvatar = '';
@@ -689,7 +689,7 @@ export class App implements OnInit {
   editEmpName = '';
   editEmpEmail = '';
   editEmpPassword = '';
-  editEmpRole = 'Collaborateur';
+  editEmpPhone = '';
   editEmpDepartment = 'Finance';
   editEmpStatus = 'Actif';
   editEmpAvatar = '';
@@ -739,7 +739,7 @@ export class App implements OnInit {
     this.newEmpName = '';
     this.newEmpEmail = '';
     this.newEmpPassword = '';
-    this.newEmpRole = 'Collaborateur';
+    this.newEmpPhone = '';
     this.newEmpDepartment = 'Finance';
     this.newEmpStatus = 'Actif';
     this.newEmpAvatar = '';
@@ -763,7 +763,7 @@ export class App implements OnInit {
     const newEmp = {
       name: this.newEmpName,
       email: this.newEmpEmail,
-      role: this.newEmpRole,
+      phone: this.newEmpPhone,
       department: this.newEmpDepartment,
       status: this.newEmpStatus,
       progress: 0,
@@ -781,7 +781,7 @@ export class App implements OnInit {
     this.editEmpEmail = emp.email;
     this.editEmpOriginalEmail = emp.email;
     this.editEmpPassword = emp.password || '••••••••';
-    this.editEmpRole = emp.role || 'Collaborateur';
+    this.editEmpPhone = emp.phone || '';
     this.editEmpDepartment = emp.department;
     this.editEmpStatus = emp.status;
     this.editEmpAvatar = emp.avatar;
@@ -842,7 +842,7 @@ export class App implements OnInit {
             name: this.editEmpName,
             email: this.editEmpEmail,
             password: this.editEmpPassword,
-            role: this.editEmpRole,
+            phone: this.editEmpPhone,
             department: this.editEmpDepartment,
             status: this.editEmpStatus,
             avatar: this.editEmpAvatar
