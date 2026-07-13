@@ -937,6 +937,71 @@ export class App implements OnInit {
     this.showToast("📥 Téléchargement du rapport d'intégration détaillé...");
   }
 
+  // System Settings States
+  activeSettingsTab = signal<string>('roles');
+  
+  settingsDepartments = signal([
+    { name: 'BTP', count: 5, path: 'BTP Standard' },
+    { name: 'Finance', count: 10, path: 'BTP Standard' },
+    { name: 'SI', count: 6, path: 'SI Advanced' },
+    { name: 'Transport', count: 3, path: 'Transport Standard' },
+    { name: 'RH', count: 12, path: 'RH Standard' }
+  ]);
+
+  settingsRoles = ['Admin', 'Manager', 'Employé', 'RH'];
+  selectedSettingsRole = signal<string>('Employé');
+  settingsUsersSearchQuery = signal<string>('');
+
+  settingsUsers = signal([
+    { name: 'Mohamed El Fassi', department: 'BTP', role: 'Employé', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120' },
+    { name: 'Youssef Alami', department: 'BTP', role: 'Employé', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120' },
+    { name: 'Ali Benjelloun', department: 'BTP', role: 'Employé', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120' }
+  ]);
+
+  // Permission toggles
+  permEmployeeMgmt = signal<boolean>(false);
+  permPathBuilder = signal<boolean>(true);
+  permAIControl = signal<boolean>(false);
+  permReports = signal<boolean>(false);
+  permAlerts = signal<boolean>(false);
+
+  // Filtered settings users computed
+  filteredSettingsUsers = computed(() => {
+    const query = this.settingsUsersSearchQuery().toLowerCase().trim();
+    if (!query) return this.settingsUsers();
+    return this.settingsUsers().filter(u => u.name.toLowerCase().includes(query));
+  });
+
+  addDepartment() {
+    this.showToast("➕ Ouverture de la modale d'ajout de département.");
+  }
+
+  editDepartment(deptName: string) {
+    this.showToast(`✏️ Édition du département "${deptName}".`);
+  }
+
+  deleteDepartment(deptName: string) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le département "${deptName}" ?`)) {
+      this.settingsDepartments.update(list => list.filter(d => d.name !== deptName));
+      this.showToast(`🗑️ Département "${deptName}" supprimé.`);
+    }
+  }
+
+  addRole() {
+    this.showToast("➕ Ouverture de la modale d'ajout de rôle.");
+  }
+
+  generatePermissionsWithAI() {
+    this.showToast("🤖 Génération intelligente des permissions par l'IA...");
+    // Mock toggling some values to show AI action
+    this.permEmployeeMgmt.set(true);
+    this.permAIControl.set(true);
+  }
+
+  saveSettingsChanges() {
+    this.showToast("💾 Paramètres et permissions enregistrés avec succès !");
+  }
+
   showToast(message: string) {
     this.toastMessage.set(message);
     setTimeout(() => this.toastMessage.set(''), 3000);

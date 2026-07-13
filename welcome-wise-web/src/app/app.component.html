@@ -2741,15 +2741,476 @@
         }
 
         @if (activeAdminTab() === 'settings') {
-          <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
-            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
-              <span class="material-icons-round text-3xl">settings</span>
+          <div class="space-y-6 animate-fade-in text-left">
+            
+            <!-- Top Sub-Tabs Bar -->
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-6 overflow-x-auto scrollbar-thin">
+              <button 
+                (click)="activeSettingsTab.set('account')" 
+                [class.border-b-2]="activeSettingsTab() === 'account'" 
+                [class.border-[#8C7355]]="activeSettingsTab() === 'account'" 
+                [class.text-[#8C7355]]="activeSettingsTab() === 'account'" 
+                [class.text-slate-400]="activeSettingsTab() !== 'account'" 
+                class="pb-2 px-4 text-xs font-black uppercase cursor-pointer transition-all whitespace-nowrap"
+              >
+                Compte & Sécurité
+              </button>
+              <button 
+                (click)="activeSettingsTab.set('roles')" 
+                [class.border-b-2]="activeSettingsTab() === 'roles'" 
+                [class.border-[#8C7355]]="activeSettingsTab() === 'roles'" 
+                [class.text-[#8C7355]]="activeSettingsTab() === 'roles'" 
+                [class.text-slate-400]="activeSettingsTab() !== 'roles'" 
+                class="pb-2 px-4 text-xs font-black uppercase cursor-pointer transition-all whitespace-nowrap"
+              >
+                Départements & Rôles
+              </button>
+              <button 
+                (click)="activeSettingsTab.set('ai')" 
+                [class.border-b-2]="activeSettingsTab() === 'ai'" 
+                [class.border-[#8C7355]]="activeSettingsTab() === 'ai'" 
+                [class.text-[#8C7355]]="activeSettingsTab() === 'ai'" 
+                [class.text-slate-400]="activeSettingsTab() !== 'ai'" 
+                class="pb-2 px-4 text-xs font-black uppercase cursor-pointer transition-all whitespace-nowrap"
+              >
+                Paramètres IA
+              </button>
+              <button 
+                (click)="activeSettingsTab.set('alerts')" 
+                [class.border-b-2]="activeSettingsTab() === 'alerts'" 
+                [class.border-[#8C7355]]="activeSettingsTab() === 'alerts'" 
+                [class.text-[#8C7355]]="activeSettingsTab() === 'alerts'" 
+                [class.text-slate-400]="activeSettingsTab() !== 'alerts'" 
+                class="pb-2 px-4 text-xs font-black uppercase cursor-pointer transition-all whitespace-nowrap"
+              >
+                Alertes & Notifications
+              </button>
             </div>
-            <h3 class="text-xl font-black text-[#0F172A] font-display">Paramètres Système</h3>
-            <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
-              Configurez les droits d'administration de l'équipe RH, gérez les clés d'intégration d'API et ajustez les paramètres d'envoi automatique de courriels d'accueil.
-            </p>
-            <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+
+            <!-- Tab 1: Account (Placeholder) -->
+            @if (activeSettingsTab() === 'account') {
+              <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
+                <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
+                  <span class="material-icons-round text-3xl">security</span>
+                </div>
+                <h3 class="text-xl font-black text-[#0F172A] font-display">Compte & Sécurité</h3>
+                <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+                  Gérez vos identifiants d'accès administrateur, configurez la double authentification (2FA) et consultez le journal des connexions de sécurité.
+                </p>
+                <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+              </div>
+            }
+
+            <!-- Tab 3: AI Settings (Placeholder) -->
+            @if (activeSettingsTab() === 'ai') {
+              <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
+                <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
+                  <span class="material-icons-round text-3xl">psychology</span>
+                </div>
+                <h3 class="text-xl font-black text-[#0F172A] font-display">Configuration de l'IA</h3>
+                <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+                  Configurez vos clés d'API OpenAI, ajustez la température de créativité des modèles GPT pour la génération de quiz et activez les synthèses vocales automatisées.
+                </p>
+                <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+              </div>
+            }
+
+            <!-- Tab 4: Alerts (Placeholder) -->
+            @if (activeSettingsTab() === 'alerts') {
+              <div class="bg-white rounded-[32px] p-10 shadow-sm border border-[#D4AF37]/15 text-center py-20 space-y-4 animate-fade-in flex flex-col items-center justify-center">
+                <div class="w-16 h-16 rounded-2xl bg-amber-50 text-[#D4AF37] flex items-center justify-center shadow-inner mb-2">
+                  <span class="material-icons-round text-3xl">notifications_active</span>
+                </div>
+                <h3 class="text-xl font-black text-[#0F172A] font-display">Alertes & Notifications</h3>
+                <p class="text-xs text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+                  Configurez les seuils d'inactivité des nouveaux collaborateurs, gérez les alertes de blocage par e-mail et paramétrez l'envoi hebdomadaire de rapports aux managers.
+                </p>
+                <span class="text-[9px] bg-[#FAF6F0] text-[#8C7355] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#D4AF37]/35 mt-2">Bientôt Disponible</span>
+              </div>
+            }
+
+            <!-- Tab 2: Departments & Roles (Active Dashboard) -->
+            @if (activeSettingsTab() === 'roles') {
+              <div class="space-y-6 animate-fade-in">
+                
+                <!-- Main Header Title -->
+                <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-4">
+                  <div class="flex flex-col">
+                    <span class="text-[9px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/25 px-3 py-1 rounded-full uppercase tracking-wider w-fit mb-1">
+                      Gestion d'Équipe
+                    </span>
+                    <h2 class="text-2xl font-black text-[#0F172A] font-display leading-tight">
+                      Administration des Départements & Rôles
+                    </h2>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+                      <span class="material-icons-round text-xs">lan</span>
+                      WelcomeWise System
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Main Split Layout: Left Column (7 cols) and Right Column (5 cols) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  
+                  <!-- Left Column: Tables (7 cols) -->
+                  <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Card 1: Departments Management -->
+                    <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm relative pt-8">
+                      <!-- Golden/Beige Pill Header -->
+                      <div class="absolute -top-3.5 left-6 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                        Gestion des Départements
+                      </div>
+
+                      <div class="flex items-center justify-between mb-4 mt-2">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-wider">DEPARTMENTS MANAGEMENT</span>
+                        <button 
+                          (click)="addDepartment()"
+                          class="py-2 px-3 bg-[#1E3A8A] hover:bg-[#0F172A] text-white rounded-xl text-[9px] font-black transition-all cursor-pointer flex items-center justify-center gap-1 border-none shadow-sm"
+                        >
+                          <span class="material-icons-round text-xs">add</span>
+                          <span>Ajouter Département</span>
+                        </button>
+                      </div>
+
+                      <!-- Departments Table -->
+                      <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                        <table class="w-full text-left border-collapse">
+                          <thead>
+                            <tr class="bg-[#FAF8F5] border-b border-slate-100 text-slate-400 text-[8.5px] font-black uppercase tracking-wider">
+                              <th class="py-2.5 px-4 text-left">Département</th>
+                              <th class="py-2.5 px-4 text-center">Employés</th>
+                              <th class="py-2.5 px-4 text-left">Parcours d'Intégration</th>
+                              <th class="py-2.5 px-4 text-center">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-slate-50 text-[10.5px] font-bold text-slate-700">
+                            @for (dept of settingsDepartments(); track dept.name) {
+                              <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="py-3 px-4 text-left font-extrabold text-[#0F172A]">{{ dept.name }}</td>
+                                <td class="py-3 px-4 text-center text-slate-500 font-extrabold">{{ dept.count }}</td>
+                                <td class="py-3 px-4 text-left text-[#8C7355] font-extrabold">{{ dept.path }}</td>
+                                <td class="py-3 px-4 text-center">
+                                  <div class="flex items-center justify-center gap-1.5">
+                                    <button 
+                                      (click)="editDepartment(dept.name)"
+                                      class="py-1 px-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg text-[9px] font-black transition cursor-pointer border border-slate-200"
+                                    >
+                                      Modifier
+                                    </button>
+                                    <button 
+                                      (click)="deleteDepartment(dept.name)"
+                                      class="py-1 px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black transition cursor-pointer border border-red-100"
+                                    >
+                                      Retirer
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Card 2: User Assignment -->
+                    <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm relative pt-8">
+                      <!-- Golden/Beige Pill Header -->
+                      <div class="absolute -top-3.5 left-6 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                        Affectation des Collaborateurs
+                      </div>
+
+                      <div class="flex items-center justify-between mb-4 mt-2">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-wider">User Assignment</span>
+                        
+                        <!-- Search Bar -->
+                        <div class="relative w-48">
+                          <span class="material-icons-round absolute left-2.5 top-2 text-[11px] text-slate-400">search</span>
+                          <input 
+                            type="text" 
+                            [(ngModel)]="settingsUsersSearchQuery"
+                            placeholder="Rechercher..."
+                            class="w-full bg-slate-50 border border-slate-200 rounded-lg py-1 pl-7 pr-3 text-[10px] font-bold focus:outline-none focus:border-[#8C7355] transition-all"
+                          >
+                        </div>
+                      </div>
+
+                      <!-- Assignment Table -->
+                      <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                        <table class="w-full text-left border-collapse">
+                          <thead>
+                            <tr class="bg-[#FAF8F5] border-b border-slate-100 text-slate-400 text-[8.5px] font-black uppercase tracking-wider">
+                              <th class="py-2.5 px-4 text-left">Nom & Collaborateur</th>
+                              <th class="py-2.5 px-4 text-left">Département</th>
+                              <th class="py-2.5 px-4 text-left">Rôle affecté</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-slate-50 text-[10.5px] font-bold text-slate-700">
+                            @for (usr of filteredSettingsUsers(); track usr.name) {
+                              <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="py-2.5 px-4 text-left">
+                                  <div class="flex items-center gap-2">
+                                    <img [src]="usr.avatar" class="w-6 h-6 rounded-full border border-slate-100 shadow-inner" alt="Avatar">
+                                    <span class="font-extrabold text-[#0F172A]">{{ usr.name }}</span>
+                                  </div>
+                                </td>
+                                <td class="py-2.5 px-4 text-left">
+                                  <select 
+                                    [(ngModel)]="usr.department"
+                                    class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-[10px] font-bold text-slate-700 focus:outline-none focus:border-[#8C7355] cursor-pointer"
+                                  >
+                                    <option value="BTP">BTP</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="SI">SI</option>
+                                    <option value="Transport">Transport</option>
+                                    <option value="RH">RH</option>
+                                  </select>
+                                </td>
+                                <td class="py-2.5 px-4 text-left">
+                                  <select 
+                                    [(ngModel)]="usr.role"
+                                    class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-[10px] font-bold text-slate-700 focus:outline-none focus:border-[#8C7355] cursor-pointer"
+                                  >
+                                    <option value="Admin">Admin</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Employé">Employé</option>
+                                    <option value="RH">RH</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Right Column: Sidebar permissions (5 cols) -->
+                  <div class="lg:col-span-5 space-y-6">
+                    
+                    <!-- Card 1: Roles & Permissions list and tree -->
+                    <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm relative pt-8">
+                      <!-- Golden/Beige Pill Header -->
+                      <div class="absolute -top-3.5 left-6 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                        Rôles & Hiérarchie
+                      </div>
+
+                      <div class="flex items-center justify-between mb-4 mt-2">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Rôles de l'organisation</span>
+                        <span class="text-[8px] bg-slate-100 text-slate-500 font-black px-2 py-0.5 rounded-md">Ménara Holding</span>
+                      </div>
+
+                      <div class="grid grid-cols-12 gap-4 items-center">
+                        
+                        <!-- Roles list (5 cols) -->
+                        <div class="col-span-5 border border-slate-100 rounded-2xl p-2.5 bg-slate-50/50 space-y-1">
+                          <span class="block text-[8px] font-black text-slate-400 uppercase tracking-wider mb-1.5 text-center">Rôles Système</span>
+                          
+                          @for (role of settingsRoles; track role) {
+                            <button 
+                              (click)="selectedSettingsRole.set(role)" 
+                              [class.bg-[#8C7355]]="selectedSettingsRole() === role"
+                              [class.text-white]="selectedSettingsRole() === role"
+                              [class.bg-white]="selectedSettingsRole() !== role"
+                              [class.text-slate-700]="selectedSettingsRole() !== role"
+                              class="w-full text-left py-2 px-3 rounded-xl text-[10px] font-black transition shadow-sm border border-slate-200/50 cursor-pointer select-none"
+                            >
+                              {{ role }}
+                            </button>
+                          }
+                        </div>
+
+                        <!-- Organization tree SVG (7 cols) -->
+                        <div class="col-span-7 bg-[#FAF8F5] border border-slate-200/60 rounded-2xl p-2 flex flex-col items-center justify-center min-h-[145px]">
+                          <span class="text-[7.5px] font-black text-slate-400 uppercase tracking-widest mb-1">Hiérarchie Départementale</span>
+                          
+                          <!-- SVG Chart tree -->
+                          <svg viewBox="0 0 160 110" class="w-full h-full">
+                            <!-- Root node (BTP) -->
+                            <rect x="65" y="5" width="30" height="14" rx="3" fill="#0F172A" />
+                            <text x="80" y="14" fill="#FFFFFF" font-size="6.5" font-weight="900" text-anchor="middle">BTP</text>
+
+                            <!-- Connecting paths from root to level 1 -->
+                            <line x1="80" y1="19" x2="80" y2="35" stroke="#8C7355" stroke-width="1"/>
+                            <line x1="30" y1="35" x2="130" y2="35" stroke="#8C7355" stroke-width="1"/>
+                            
+                            <line x1="30" y1="35" x2="30" y2="45" stroke="#8C7355" stroke-width="1"/>
+                            <line x1="80" y1="35" x2="80" y2="45" stroke="#8C7355" stroke-width="1"/>
+                            <line x1="130" y1="35" x2="130" y2="45" stroke="#8C7355" stroke-width="1"/>
+
+                            <!-- Level 1 Nodes -->
+                            <!-- Node BTP -->
+                            <rect x="15" y="45" width="30" height="12" rx="3" fill="#8C7355" />
+                            <text x="30" y="53" fill="#FFFFFF" font-size="6.5" font-weight="900" text-anchor="middle">BTP</text>
+
+                            <!-- Node Finance -->
+                            <rect x="65" y="45" width="30" height="12" rx="3" fill="#D4AF37" />
+                            <text x="80" y="53" fill="#FFFFFF" font-size="6.5" font-weight="900" text-anchor="middle">Finance</text>
+
+                            <!-- Node Transport -->
+                            <rect x="115" y="45" width="30" height="12" rx="3" fill="#94A3B8" />
+                            <text x="130" y="53" fill="#FFFFFF" font-size="6.5" font-weight="900" text-anchor="middle">Logistique</text>
+
+                            <!-- Connecting paths from level 1 to level 2 -->
+                            <line x1="30" y1="57" x2="30" y2="70" stroke="#8C7355" stroke-width="0.8" stroke-dasharray="2,2"/>
+                            <line x1="80" y1="57" x2="80" y2="70" stroke="#8C7355" stroke-width="0.8" stroke-dasharray="2,2"/>
+                            <line x1="130" y1="57" x2="130" y2="70" stroke="#8C7355" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+                            <!-- Level 2 Nodes -->
+                            <!-- Sub-finance under BTP -->
+                            <rect x="15" y="70" width="30" height="11" rx="2" fill="#FAF6F0" stroke="#8C7355" stroke-width="0.5" />
+                            <text x="30" y="78" fill="#8C7355" font-size="5.5" font-weight="900" text-anchor="middle">Finance</text>
+
+                            <!-- Sub-SI under Finance -->
+                            <rect x="65" y="70" width="30" height="11" rx="2" fill="#FAF6F0" stroke="#D4AF37" stroke-width="0.5" />
+                            <text x="80" y="78" fill="#8C7355" font-size="5.5" font-weight="900" text-anchor="middle">SI</text>
+
+                            <!-- Sub-RH under Transport -->
+                            <rect x="115" y="70" width="30" height="11" rx="2" fill="#FAF6F0" stroke="#94A3B8" stroke-width="0.5" />
+                            <text x="130" y="78" fill="#8C7355" font-size="5.5" font-weight="900" text-anchor="middle">RH</text>
+                          </svg>
+
+                        </div>
+
+                      </div>
+
+                      <!-- AI Generation Box and Quick Add -->
+                      <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
+                        <!-- AI generation button -->
+                        <button 
+                          (click)="generatePermissionsWithAI()"
+                          class="w-full py-2.5 bg-[#FAF6F0] hover:bg-[#D4AF37]/20 border border-[#D4AF37]/35 text-[#8C7355] rounded-xl text-[9px] font-black transition-all cursor-pointer flex items-center justify-center gap-1"
+                        >
+                          <span class="material-icons-round text-sm">psychology</span>
+                          <span>ROLES & PERMISSIONS (IA)</span>
+                        </button>
+
+                        <div class="grid grid-cols-3 gap-2 mt-1">
+                          <span class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-1.5 text-[8.5px] font-black text-slate-500 text-center uppercase">BTP</span>
+                          <span class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-1.5 text-[8.5px] font-black text-slate-500 text-center uppercase">Finance</span>
+                          <span class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-1.5 text-[8.5px] font-black text-slate-500 text-center uppercase">RH</span>
+                        </div>
+
+                        <!-- Add new role button -->
+                        <button 
+                          (click)="addRole()"
+                          class="w-full mt-2 py-2.5 bg-[#1E3A8A] hover:bg-[#0F172A] text-white rounded-xl text-[9.5px] font-black transition cursor-pointer border-none shadow-sm flex items-center justify-center gap-1"
+                        >
+                          <span class="material-icons-round text-xs">add_circle_outline</span>
+                          <span>Créer un Nouveau Rôle</span>
+                        </button>
+                      </div>
+
+                    </div>
+
+                    <!-- Card 2: Customize Permissions (Toggles) -->
+                    <div class="bg-white border border-[#D4AF37]/15 rounded-[32px] p-6 shadow-sm relative pt-8">
+                      <!-- Golden/Beige Pill Header -->
+                      <div class="absolute -top-3.5 left-6 text-[10px] font-black text-[#8C7355] bg-[#FAF6F0] border border-[#D4AF37]/35 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                        Personnaliser les Permissions
+                      </div>
+
+                      <div class="flex items-center justify-between mb-4 mt-2">
+                        <span class="text-xs font-black text-[#0F172A]">Ajustement des droits pour : {{ selectedSettingsRole() }}</span>
+                        <span class="text-[8.5px] font-black text-[#8C7355] bg-[#FAF6F0] px-2 py-0.5 rounded-md border border-[#D4AF37]/20 uppercase">Ajustement</span>
+                      </div>
+
+                      <!-- Permissions Toggles List -->
+                      <div class="space-y-3.5 text-left bg-slate-50/50 p-4 border border-slate-100 rounded-2xl">
+                        
+                        <!-- Toggle 1: Gestion des employés -->
+                        <div class="flex items-center justify-between">
+                          <div class="leading-none">
+                            <span class="text-xs font-extrabold text-[#0F172A] block">Gestion des Employés</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Accès complet à la table de suivi et fiches collaborateurs</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="permEmployeeMgmt" class="sr-only peer">
+                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                          </label>
+                        </div>
+
+                        <!-- Toggle 2: Builder de parcours -->
+                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                          <div class="leading-none">
+                            <span class="text-xs font-extrabold text-[#0F172A] block">Builder de Parcours</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Création et modification des modules, leçons et documents</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="permPathBuilder" class="sr-only peer">
+                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                          </label>
+                        </div>
+
+                        <!-- Toggle 3: Intelligence Artificielle -->
+                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                          <div class="leading-none">
+                            <span class="text-xs font-extrabold text-[#0F172A] block">Intelligence Artificielle</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Accès au générateur de quiz et modération par IA</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="permAIControl" class="sr-only peer">
+                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                          </label>
+                        </div>
+
+                        <!-- Toggle 4: Rapports -->
+                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                          <div class="leading-none">
+                            <span class="text-xs font-extrabold text-[#0F172A] block">Accès aux Rapports</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Visualisation des statistiques d'intégration et export PDF/Excel</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="permReports" class="sr-only peer">
+                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                          </label>
+                        </div>
+
+                        <!-- Toggle 5: Envoyer des alertes -->
+                        <div class="flex items-center justify-between border-t border-slate-100/60 pt-3">
+                          <div class="leading-none">
+                            <span class="text-xs font-extrabold text-[#0F172A] block">Envoi d'Alertes</span>
+                            <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Envoi manuel ou automatique de rappels aux collaborateurs</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="permAlerts" class="sr-only peer">
+                            <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#8C7355]"></div>
+                          </label>
+                        </div>
+
+                      </div>
+
+                      <div class="text-[7.5px] font-bold text-slate-400 mt-2 leading-relaxed text-left block">
+                        Les droits et autorisations sont appliqués en temps réel aux utilisateurs possédant ce rôle.
+                      </div>
+                    </div>
+
+                    <!-- Bottom Right Actions (Save & Cancel) -->
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                      <button 
+                        (click)="activeAdminTab.set('dashboard')" 
+                        class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase cursor-pointer rounded-xl border-none transition"
+                      >
+                        Annuler
+                      </button>
+                      <button 
+                        (click)="saveSettingsChanges()" 
+                        class="px-8 py-3 bg-[#1E3A8A] hover:bg-[#0F172A] text-white font-extrabold text-xs uppercase cursor-pointer rounded-xl border-none transition shadow-md shadow-blue-900/10"
+                      >
+                        Enregistrer les modifications
+                      </button>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            }
+
           </div>
         }
 
